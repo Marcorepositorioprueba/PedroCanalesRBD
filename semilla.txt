@@ -133,7 +133,8 @@ function importarLocalidades() {
   let skipped = 0;
   for (let i = 1; i < data.length; i++) {
     const [nomMun, loc, nomLoc] = data[i];
-    if (!loc || !nomLoc) { skipped++; continue; }
+    // Solo NOM_LOC es obligatorio; NOM_MUN y LOC pueden venir vacíos
+    if (!String(nomLoc).trim()) { skipped++; continue; }
     // NOM_MUN vacío = Tulancingo de Bravo (municipio único del clon)
     const nombreMun = String(nomMun).trim() || 'Tulancingo de Bravo';
     const munId = munMap[nombreMun];

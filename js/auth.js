@@ -2,7 +2,7 @@
  * auth.js — login, logout, sesión en localStorage
  */
 const Auth = {
-  KEY: 'mvt_session_v1',
+  KEY: 'pc_session_v1',
 
   getSession() {
     try { return JSON.parse(localStorage.getItem(this.KEY) || 'null'); }

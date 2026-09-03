@@ -1,4 +1,8 @@
 /**
- * config.js — URL del Web App Apps Script
+ * config.js — URL del Web App Apps Script (clon Pedro Canales · Tulancingo)
+ *
+ * ⚠ PENDIENTE: crear el Sheet + Apps Script propios (ver README, pasos 1-3)
+ * y pegar aquí la URL /exec del NUEVO Web App.
+ * NO pegar aquí la URL del RBD de Tatiana — sería escribir en su producción.
  */
-const API_URL = 'https://script.google.com/macros/s/AKfycbzLo2UidAwcHFiHx-sluDVQXwEuWAY6agQ3LTp-8TZsAhxRSdJfl42Cb8sd-djKbt8Ayg/exec';
+const API_URL = 'PENDIENTE_CONFIGURAR_URL_EXEC';

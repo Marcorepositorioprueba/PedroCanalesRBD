@@ -20,7 +20,7 @@ function _err(msg, code) {
   ).setMimeType(ContentService.MimeType.JSON);
 }
 function _hash(pwd) {
-  const raw = 'MVT_HGO_2026:' + pwd;
+  const raw = 'PC_TULA_2026:' + pwd;
   const bytes = Utilities.computeDigest(
     Utilities.DigestAlgorithm.SHA_256, raw, Utilities.Charset.UTF_8
   );

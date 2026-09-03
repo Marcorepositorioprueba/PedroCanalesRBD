@@ -5,7 +5,7 @@ http://localhost:8080/index.html
 =========================================================
 REGISTRO BÁSICO DE DATOS (RBD) — V1
 Antes: MVT (Mapa de Vinculación Territorial)
-Hoja de Ruta · Campaña Tatiana Ángeles — Hidalgo
+Hoja de Ruta · Campaña Pedro Canales — Hidalgo
 =========================================================
 
 Stack acordado
@@ -25,7 +25,7 @@ Electoralangeles/
 ├── index.html              (login con foto Tatiana de fondo)
 ├── app.html                (SPA: home/búsqueda + nuevo + ficha + sidebar)
 ├── css/
-│   └── styles.css          (paleta vino Tatiana Ángeles)
+│   └── styles.css          (paleta vino Pedro Canales)
 ├── js/
 │   ├── config.js           (URL del Web App Apps Script)
 │   ├── auth.js             (login + sesión localStorage + logout)
@@ -119,7 +119,7 @@ PRUEBA BLOQUE 4
 BLOQUE 5 — DISEÑO  (Día 2, mediodía)
 -------------------------------------
 [✓] 5.1 styles.css: mobile-first, tipografía, paleta consistente.
-        Paleta vino Tatiana Ángeles (#6B1F2E) + serif para branding.
+        Paleta vino Pedro Canales (#6B1F2E) + serif para branding.
 [✓] 5.2 Tarjetas: bordes suaves, jerarquía nombre > meta > badges.
 [✓] 5.3 Botones grandes (min 44px alto), buen contraste, focus visible.
 [✓] 5.4 Nav inferior fija con 4 iconos SVG inline (inicio, nuevo,
@@ -132,7 +132,7 @@ PRUEBA BLOQUE 5
   - Se ve decente en móvil y escritorio.
   - Sin scroll horizontal en 360px.
   - Sin dependencias externas.
-  - Sesión 2026-08-09: rebranding Tatiana Ángeles aplicado.
+  - Sesión 2026-08-09: rebranding Pedro Canales aplicado.
 
 BLOQUE 6 — AUDITORÍA FINAL  (Día 2, tarde)
 ------------------------------------------
@@ -306,7 +306,7 @@ Sesión | Bloque | Estado | Notas
 --     | --     | --     | Proyecto creado. Estructura de carpetas y ROADMAP definidos. Listo para arrancar Bloque 1.
 2026-08-09 | 1-4   | ✅ Cerrado | Backend + captura + consulta + ficha + seguimientos + edición funcionando.
 2026-08-09 | 5-6   | ✅ Cerrado | Robustez (expiración + paginación + red) + imprimir + permisos + auditoría + .gitignore + README.
-2026-08-09 | 5     | ✅ Cerrado | Rediseño visual Tatiana Ángeles (paleta vino, monograma TA, 3 pilares).
+2026-08-09 | 5     | ✅ Cerrado | Rediseño visual Pedro Canales (paleta vino, monograma TA, 3 pilares).
 2026-08-09 | 5     | ✅ Cerrado | Sidebar desktop con 25 frases rotativas (cada 6s) + watermark app-main + login con foto Tatiana + Ken Burns.
 2026-08-10 | 5     | ✅ Cerrado | Login card centrado (flex margin:auto, background-position:right center). Salir → index.html (try/catch).
 

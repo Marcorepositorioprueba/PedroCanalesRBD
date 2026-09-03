@@ -1,6 +1,6 @@
 # Registro Básico de Datos (RBD)
 
-Sistema de captura, consulta y seguimiento de vinculaciones políticas/territoriales para la campaña Tatiana Ángeles — Hidalgo.
+Sistema de captura, consulta y seguimiento de vinculaciones políticas/territoriales para la campaña Pedro Canales — Hidalgo.
 
 **Stack:** HTML + CSS + JavaScript puro · Google Apps Script (Web App) · Google Sheets como BD.
 
@@ -132,10 +132,10 @@ python -m http.server 8765
 | actualizado_en | date | server-side |
 
 ### MUNICIPIOS
-`id | nombre | clave` — los 84 municipios de Hidalgo.
+`id | nombre | clave` — solo Tulancingo de Bravo.
 
 ### LOCALIDADES
-`id | municipio_id | nombre | clave` — ~4,700 localidades precargadas.
+`id | municipio_id | nombre | clave` — localidades de Tulancingo de Bravo.
 
 ### USUARIOS
 `id | usuario | password_hash | nombre | rol | activo | created_at`
@@ -188,4 +188,4 @@ Sin build, sin dependencias, sin frameworks. Edita HTML/CSS/JS y refresca el nav
 
 ## Licencia
 
-Privado. Uso interno de la campaña Tatiana Ángeles.
+Privado. Uso interno de la campaña Pedro Canales.

@@ -7,14 +7,14 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="assets/img/icon-192.svg">
   <link rel="apple-touch-icon" href="assets/img/icon-192.svg">
-  <title>RBD — Iniciar sesión · Tatiana Ángeles</title>
+  <title>RBD — Iniciar sesión · Pedro Canales</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="login-body">
   <main class="login-card">
     <div class="login-brand">
-      <div class="monogram">TA</div>
-      <div class="name">Tatiana Ángeles</div>
+      <div class="monogram">PC</div>
+      <div class="name">Pedro Canales</div>
       <div class="tagline">Vamos Contigo</div>
     </div>
     <form id="frm-login">
@@ -57,16 +57,16 @@
   <script>
     // Siempre mostrar el formulario. Si ya hay sesión, el usuario puede hacer logout desde la app.
     try {
-      const raw = localStorage.getItem('mvt_session_v1');
+      const raw = localStorage.getItem('pc_session_v1');
       if (raw) {
         const s = JSON.parse(raw);
         const tokenOk = s && s.token && /^[0-9a-f]{32}$/i.test(s.token);
         if (!tokenOk) {
-          localStorage.removeItem('mvt_session_v1');
+          localStorage.removeItem('pc_session_v1');
         }
       }
     } catch (_) {
-      localStorage.removeItem('mvt_session_v1');
+      localStorage.removeItem('pc_session_v1');
     }
 
     document.getElementById('frm-login').addEventListener('submit', async (e) => {

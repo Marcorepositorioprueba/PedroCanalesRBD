@@ -1,17 +1,18 @@
 /**
- * semilla.gs — Mapa de Vinculación Territorial V1
+ * semilla.gs — RBD Pedro Canales · Tulancingo de Bravo
  *
- * PASO 1. Ejecuta inicializar()    → crea hojas + admin + catálogos + municipios.
+ * PASO 1. Ejecuta inicializar()    → crea hojas + admin + catálogos + municipio.
  * PASO 2. Crea hoja "_LOCALIDADES_SEED" (A:NOM_MUN B:LOC C:NOM_LOC).
- * PASO 3. Pega la tabla de ~3000 localidades.
+ * PASO 3. Pega SOLO las localidades de Tulancingo de Bravo (el import
+ *         descarta automáticamente cualquier otro municipio).
  * PASO 4. Ejecuta importarLocalidades().
  */
 
 // ===== CONFIG =====
-const ADMIN_USERNAME = 'marco';
-const ADMIN_PASSWORD = 'admin01';
+const ADMIN_USERNAME = 'pcadmin';
+const ADMIN_PASSWORD = 'Tulancingo2026';
 const ADMIN_NAME     = 'Administrador';
-const APP_SALT       = 'MVT_HGO_2026';
+const APP_SALT       = 'PC_TULA_2026';
 
 // ===== CATÁLOGOS =====
 const CATALOGOS = {
@@ -36,46 +37,9 @@ const CATALOGOS = {
   ]
 };
 
-// ===== MUNICIPIOS DE HIDALGO (84) =====
+// ===== MUNICIPIO ÚNICO: TULANCINGO DE BRAVO =====
 const MUNICIPIOS = [
-  [1,'Acatlán','001'],[2,'Acaxochitlán','002'],[3,'Actopan','003'],
-  [4,'Agua Blanca de Iturbide','004'],[5,'Ajacuba','005'],
-  [6,'Alfajayucan','006'],[7,'Almoloya','007'],[8,'Apan','008'],
-  [9,'El Arenal','009'],[10,'Atitalaquia','010'],[11,'Atlapexco','011'],
-  [12,'Atotonilco el Grande','012'],[13,'Atotonilco de Tula','013'],
-  [14,'Calnali','014'],[15,'Cardonal','015'],
-  [16,'Cuautepec de Hinojosa','016'],[17,'Chapantongo','017'],
-  [18,'Chapulhuacán','018'],[19,'Chilcuautla','019'],
-  [20,'Eloxochitlán','020'],[21,'Emiliano Zapata','021'],
-  [22,'Epazoyucan','022'],[23,'Francisco I. Madero','023'],
-  [24,'Huasca de Ocampo','024'],[25,'Huautla','025'],
-  [26,'Huazalingo','026'],[27,'Huehuetla','027'],
-  [28,'Huejutla de Reyes','028'],[29,'Huichapan','029'],
-  [30,'Ixmiquilpan','030'],[31,'Jacala de Ledezma','031'],
-  [32,'Jaltocán','032'],[33,'Juárez Hidalgo','033'],[34,'Lolotla','034'],
-  [35,'Metepec','035'],[36,'San Agustín Metzquititlán','036'],
-  [37,'Metztitlán','037'],[38,'Mineral del Chico','038'],
-  [39,'Mineral del Monte','039'],[40,'La Misión','040'],
-  [41,'Mixquiahuala de Juárez','041'],[42,'Molango de Escamilla','042'],
-  [43,'Nicolás Flores','043'],[44,'Nopala de Villagrán','044'],
-  [45,'Omitlán de Juárez','045'],[46,'San Felipe Orizatlán','046'],
-  [47,'Pacula','047'],[48,'Pachuca de Soto','048'],[49,'Pisaflores','049'],
-  [50,'Progreso de Obregón','050'],[51,'Mineral de la Reforma','051'],
-  [52,'San Agustín Tlaxiaca','052'],[53,'San Bartolo Tutotepec','053'],
-  [54,'San Salvador','054'],[55,'Santiago de Anaya','055'],
-  [56,'Santiago Tulantepec de Lugo Guerrero','056'],[57,'Singuilucan','057'],
-  [58,'Tasquillo','058'],[59,'Tecozautla','059'],
-  [60,'Tenango de Doria','060'],[61,'Tepeapulco','061'],
-  [62,'Tepehuacán de Guerrero','062'],[63,'Tepeji del Río de Ocampo','063'],
-  [64,'Tepetitlán','064'],[65,'Tetepango','065'],
-  [66,'Villa de Tezontepec','066'],[67,'Tezontepec de Aldama','067'],
-  [68,'Tianguistengo','068'],[69,'Tizayuca','069'],[70,'Tlahuelilpan','070'],
-  [71,'Tlahuiltepa','071'],[72,'Tlanalapa','072'],[73,'Tlanchinol','073'],
-  [74,'Tlaxcoapan','074'],[75,'Tolcayuca','075'],[76,'Tula de Allende','076'],
-  [77,'Tulancingo de Bravo','077'],[78,'Xochiatipan','078'],
-  [79,'Xochicoatlán','079'],[80,'Yahualica','080'],
-  [81,'Zacualtipán de Ángeles','081'],[82,'Zapotlán de Juárez','082'],
-  [83,'Zempoala','083'],[84,'Zimapán','084']
+  [77,'Tulancingo de Bravo','077']
 ];
 
 // ===== HELPERS =====

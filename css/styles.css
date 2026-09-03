@@ -1,4 +1,4 @@
-/* styles.css — RBD (Registro Básico de Datos) · Paleta vino Tatiana Ángeles */
+/* styles.css — RBD (Registro Básico de Datos) · Paleta vino Pedro Canales */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   /* Paleta principal — vino/guinda */
@@ -59,7 +59,7 @@ input, select, textarea {
 label { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
 label input, label select, label textarea { margin-top: 4px; color: var(--text); }
 
-/* LOGIN — fondo con foto Tatiana Ángeles */
+/* LOGIN — fondo con foto Pedro Canales */
 .login-body {
   display: flex;
   align-items: center;
@@ -74,7 +74,7 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   content: "";
   position: absolute;
   inset: -4%;
-  background: url('../assets/img/tatiana-bg.png') center center / cover no-repeat;
+  background: url('../assets/img/pedro-bg.png') center center / cover no-repeat;
   z-index: 0;
   animation: kenburns 16s ease-in-out infinite alternate;
   will-change: transform;
@@ -229,7 +229,7 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   content: "";
   position: absolute;
   inset: 0;
-  background: url('../assets/img/tatiana-bg.png') center center / cover no-repeat;
+  background: url('../assets/img/pedro-bg.png') center center / cover no-repeat;
   opacity: 0.10;
   pointer-events: none;
   z-index: 0;
@@ -268,7 +268,7 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
 }
 .bottom-nav svg { width: 24px; height: 24px; }
 
-/* TARJETAS REGISTRO v2 — Tatiana Ángeles */
+/* TARJETAS REGISTRO v2 — Pedro Canales */
 .cards { display: grid; gap: 12px; }
 .card {
   background: var(--card); border: 1px solid var(--border);
@@ -592,7 +592,7 @@ label input[type="text"][id$="-otro"] {
   margin-top: 2px;
 }
 
-/* HERO HOME — cabecera aspiracional Tatiana Ángeles */
+/* HERO HOME — cabecera aspiracional Pedro Canales */
 .hero-home {
   text-align: left;
   padding: 18px 4px 14px;
@@ -779,7 +779,7 @@ button.btn-loading::after {
     inset: 0;
     background:
       linear-gradient(180deg, rgba(74, 20, 32, 0.85) 0%, rgba(107, 31, 46, 0.92) 50%, rgba(138, 42, 61, 0.95) 100%),
-      url('../assets/img/tatiana-bg.png') center top / cover no-repeat;
+      url('../assets/img/pedro-bg.png') center top / cover no-repeat;
     background-blend-mode: normal;
     z-index: 0;
   }

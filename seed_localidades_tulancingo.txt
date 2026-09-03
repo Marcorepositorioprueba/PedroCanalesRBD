@@ -1,0 +1,81 @@
+NOM_MUN	LOC	NOM_LOC
+		Tulancingo
+		Jaltepec
+		Parque Urbano Napateco
+		Javier Rojo Gómez
+		Santa Ana Hueytlalpan
+		Rincones de la Hacienda
+		Santa María Asunción
+		Ahuehuetitla
+		La Lagunilla
+		Viveros de la Loma
+		Fraccionamiento del Magisterio Tulancinguense
+		San Antonio Farías
+		Napateco
+		San Nicolás el Chico [Rancho]
+		Tepalzingo
+		Carlos Salinas de Gortari [Fraccionamiento]
+		Ejido el Paraíso
+		San Nicolás Cebolletas
+		Santa María el Chico
+		Pedregal de San Francisco
+		Colonia 2 de Agosto
+		Ejido Mimila
+		Acocul Guadalupe
+		Huajomulco
+		San Felipe [Colonia]
+		Lomas del Pedregal [Colonia]
+		Sultepec
+		San Vicente
+		San Nicolás el Grande
+		El Abra
+		Zototlán
+		San Vidal
+		Buenos Aires (Ejido Ahuehuetitla) [Colonia]
+		Axatempa
+		Acocul la Palma
+		San Francisco
+		Otontepec
+		Las Colmenas
+		Ejido Santiago Caltengo
+		Francisco Villa Napateco
+		Laguna del Cerrito
+		La Raya
+		Tollancingo
+		Santiago Caltengo (Buenos Aires)
+		Emiliano Zapata [Colonia]
+		San Rafael Loma Bonita (Ejido Santa Ana Hueytlalpan)
+		Pozas Encantadas
+		Los Álamos
+		Guadalupe [Colonia]
+		Santa Fe [Colonia]
+		Atlalpan
+		Ejido Jaltepec
+		Ejido San Dionisio
+		Ejido Huapalcalco
+		La Presa de Santa Ana
+		San Francisco Huatengo
+		San Rafael el Jagüey (Ejido Santa Ana Hueytlalpan)
+		San Rafael Loma Bonita (Ejido Tulancingo)
+		San Rafael el Jagüey (Ejido Santa María Asunción)
+		Ejido Santa Ana Hueytlalpan
+		San Rafael los Teteles
+		Lomas de Tulancingo
+		Ojo de Agua
+		Huitititla
+		Ejido Jaltepec
+		Ejido Tulancingo
+		Ejido Zapotlán de Allende
+		Las Piletas
+		Agua Escondida
+		San Pablo
+		Buenos Aires [Rancho]
+		Ejido Huapalcalco
+		Ejido Huapalcalco (Las Ánimas)
+		Los Laureles
+		La Presa (Minas de Metilatla)
+		San Cayetano
+		San Isidro [Rancho]
+		Chimilpa
+		Santa Isabel [Rancho]
+		Parte Alta de Cuauhtémoc

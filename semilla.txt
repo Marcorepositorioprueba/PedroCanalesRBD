@@ -133,10 +133,13 @@ function importarLocalidades() {
   let skipped = 0;
   for (let i = 1; i < data.length; i++) {
     const [nomMun, loc, nomLoc] = data[i];
-    if (!nomMun || !loc || !nomLoc) { skipped++; continue; }
-    const munId = munMap[String(nomMun).trim()];
+    if (!loc || !nomLoc) { skipped++; continue; }
+    // NOM_MUN vacío = Tulancingo de Bravo (municipio único del clon)
+    const nombreMun = String(nomMun).trim() || 'Tulancingo de Bravo';
+    const munId = munMap[nombreMun];
     if (!munId) { skipped++; continue; }
-    const clave = String(loc).padStart(4, '0');
+    // LOC vacío = clave secuencial automática (0001, 0002, ...)
+    const clave = String(loc).trim() || String(rows.length + 1).padStart(4, '0');
     rows.push([rows.length + 1, munId, clave, String(nomLoc).trim()]);
   }
 

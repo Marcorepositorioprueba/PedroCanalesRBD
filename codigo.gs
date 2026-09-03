@@ -5,7 +5,7 @@
  * - Token simple en hoja SESIONES (token → usuario + expira)
  */
 
-const SHEET_ID  = SpreadsheetApp.getActiveSpreadsheet().getId();
+const SHEET_ID  = '1RsxYFnJtY5l3nJCxgwjgDW4N0p85eGaFRc9m9_tZwnQ'; // RBD Pedro Canales — Tulancingo
 const SESION_TTL_MIN = 60 * 24 * 7; // 7 días
 
 // ===== HELPERS DE RESPUESTA =====

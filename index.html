@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6B1F2E">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/img/icon-192.svg">
+  <link rel="apple-touch-icon" href="assets/img/icon-192.svg">
+  <title>RBD — Iniciar sesión · Tatiana Ángeles</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="login-body">
+  <main class="login-card">
+    <div class="login-brand">
+      <div class="monogram">TA</div>
+      <div class="name">Tatiana Ángeles</div>
+      <div class="tagline">Vamos Contigo</div>
+    </div>
+    <form id="frm-login">
+      <label>Usuario
+        <input type="text" id="usuario" autocomplete="username" required>
+      </label>
+      <label>Contraseña
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" id="btn-login">Entrar</button>
+      <div id="login-error" class="error" hidden></div>
+    </form>
+    <div class="login-pillars">
+      <div class="pillar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2l3 6 6 1-4.5 4 1 6L12 16l-5.5 3 1-6L3 9l6-1z"/>
+        </svg>
+        Experiencia
+      </div>
+      <div class="pillar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 21s-7-4.5-7-11a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-7 11-7 11"/>
+        </svg>
+        Confianza
+      </div>
+      <div class="pillar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <polyline points="3 17 9 11 13 15 21 7"/>
+          <polyline points="14 7 21 7 21 14"/>
+        </svg>
+        Resultados
+      </div>
+    </div>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Siempre mostrar el formulario. Si ya hay sesión, el usuario puede hacer logout desde la app.
+    try {
+      const raw = localStorage.getItem('mvt_session_v1');
+      if (raw) {
+        const s = JSON.parse(raw);
+        const tokenOk = s && s.token && /^[0-9a-f]{32}$/i.test(s.token);
+        if (!tokenOk) {
+          localStorage.removeItem('mvt_session_v1');
+        }
+      }
+    } catch (_) {
+      localStorage.removeItem('mvt_session_v1');
+    }
+
+    document.getElementById('frm-login').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-login');
+      const err = document.getElementById('login-error');
+      err.hidden = true;
+      UI.loading(btn, true);
+      try {
+        const u = document.getElementById('usuario').value.trim();
+        const p = document.getElementById('password').value;
+        await Auth.login(u, p);
+        window.location.replace('app.html');
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.hidden = false;
+      } finally {
+        UI.loading(btn, false);
+      }
+    });
+
+    // PWA: registrar service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

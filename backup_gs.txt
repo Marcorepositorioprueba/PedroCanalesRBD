@@ -1,0 +1,196 @@
+/**
+ * backup_gs.txt — Sistema de respaldos automáticos RBD
+ *
+ * INSTRUCCIONES DE INSTALACIÓN (una sola vez, ~3 minutos):
+ * 1. En el Google Sheet de la base, abre: Extensiones → Apps Script.
+ * 2. Crea un archivo NUEVO llamado "backup" (el ícono + junto a "Archivos").
+ * 3. Pega TODO este contenido en ese archivo nuevo.
+ * 4. Guarda (Ctrl+S).
+ * 5. Selecciona la función "instalarTriggerSemanal" en el dropdown.
+ * 6. Click en "Ejecutar". Te pedirá permisos → "Revisar permisos"
+ *    → elegir tu cuenta → "Avanzado" → "Ir a backup (no seguro)".
+ * 7. Cuando termine, ya tienes: carpeta RBD-Backups + trigger lunes 7am.
+ *
+ * Después de eso, cada lunes a las 7am se hace una copia automática
+ * del Sheet completo y se borran los backups con más de 90 días.
+ * También te llega un email de confirmación a admin01.
+ *
+ * Si quieres correrlo manualmente en cualquier momento:
+ * - Función "hacerBackup" desde el editor.
+ * - O desde la app: en la consola, App._backupManual() (no expuesto aún).
+ *
+ * Para restaurar un backup:
+ * - Abre la copia en Drive (carpeta RBD-Backups).
+ * - Archivo → Hacer una copia → trabajar sobre esa copia.
+ * - O exportar a Excel y comparar/mergear con el Sheet actual.
+ */
+
+const CARPETA_BACKUP_NOMBRE = 'RBD-Backups';
+const SHEET_BASE_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+const RETENCION_DIAS = 0;                // 0 = NUNCA borrar backups. Cambiar a 90 si quieres auto-limpieza.
+const EMAIL_AVISO = 'admin01';           // notificación de backup (resuelve a hoja USUARIOS)
+const DIA_TRIGGER = 1;                   // 1 = lunes
+const HORA_TRIGGER = 7;                  // 7am hora del servidor (normalmente UTC-6 = 1am México)
+
+// ===== HELPERS =====
+function _obtenerOCrearCarpeta() {
+  const folders = DriveApp.getFoldersByName(CARPETA_BACKUP_NOMBRE);
+  if (folders.hasNext()) return folders.next();
+  return DriveApp.createFolder(CARPETA_BACKUP_NOMBRE);
+}
+
+function _formatearFecha(d) {
+  const pad = n => ('0' + n).slice(-2);
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+       + '_' + pad(d.getHours()) + '-' + pad(d.getMinutes());
+}
+
+function _resolverEmailAdmin(nombreUsuario) {
+  try {
+    const sh = SpreadsheetApp.openById(SHEET_BASE_ID).getSheetByName('USUARIOS');
+    if (!sh) return null;
+    const data = sh.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]).trim().toLowerCase() === String(nombreUsuario).trim().toLowerCase()) {
+        // No hay columna email en el esquema actual → no se puede resolver.
+        // Devuelve null para que el aviso sea solo por log.
+        return null;
+      }
+    }
+  } catch (e) {
+    Logger.log('No se pudo resolver email admin: ' + e.message);
+  }
+  return null;
+}
+
+// ===== BACKUP PRINCIPAL =====
+function hacerBackup() {
+  const carpeta = _obtenerOCrearCarpeta();
+  const ss = SpreadsheetApp.openById(SHEET_BASE_ID);
+  const nombreOriginal = ss.getName();
+  const fecha = new Date();
+  const fechaStr = _formatearFecha(fecha);
+  const nombreCopia = 'RBD_Backup_' + fechaStr + ' (' + nombreOriginal + ')';
+
+  // Nombre temporal único (Google no permite duplicados en "Crear copia").
+  const tempName = nombreCopia + '_tmp_' + Utilities.getUuid().slice(0, 8);
+  const copia = DriveApp.getFileById(SHEET_BASE_ID).makeCopy(tempName);
+
+  // Renombrar al nombre definitivo.
+  copia.setName(nombreCopia);
+
+  // Mover a la carpeta de backups.
+  const archivo = DriveApp.getFileById(copia.getId());
+  carpeta.addFile(archivo);
+  // Quitar de "Mi unidad" raíz para que no quede duplicado.
+  try {
+    DriveApp.getRootFolder().removeFile(archivo);
+  } catch (e) {
+    Logger.log('No se pudo remover de raíz (no crítico): ' + e.message);
+  }
+
+  Logger.log('Backup creado: ' + nombreCopia + ' (id=' + archivo.getId() + ')');
+
+  // Limpiar backups viejos (solo si RETENCION_DIAS > 0).
+  const borrados = RETENCION_DIAS > 0 ? _limpiarBackupsViejos(carpeta) : 0;
+
+  // Email de aviso (solo si en el futuro agregas columna email a USUARIOS).
+  const emailDestino = _resolverEmailAdmin(EMAIL_AVISO);
+  if (emailDestino) {
+    MailApp.sendEmail(
+      emailDestino,
+      'RBD — Backup completado ' + fechaStr,
+      'Backup automático realizado.\n\n' +
+      'Archivo: ' + nombreCopia + '\n' +
+      'Archivos en RBD-Backups: ' + (carpeta.getFiles().length) + '\n' +
+      (RETENCION_DIAS > 0
+        ? 'Backups viejos eliminados (>' + RETENCION_DIAS + ' días): ' + borrados
+        : 'Backups acumulados: NUNCA se borran (RETENCION_DIAS = 0).')
+    );
+  }
+
+  return {
+    ok: true,
+    archivo: nombreCopia,
+    id: archivo.getId(),
+    url: archivo.getUrl(),
+    viejosEliminados: borrados,
+    politica: RETENCION_DIAS > 0 ? ('auto-borrado >' + RETENCION_DIAS + ' días') : 'NUNCA se borran'
+  };
+}
+
+function _limpiarBackupsViejos(carpeta) {
+  if (RETENCION_DIAS <= 0) return 0;
+  const ahora = new Date();
+  const limite = new Date(ahora.getTime() - RETENCION_DIAS * 24 * 60 * 60 * 1000);
+  const archivos = carpeta.getFiles();
+  let borrados = 0;
+  while (archivos.hasNext()) {
+    const f = archivos.next();
+    if (f.getDateCreated() < limite) {
+      try {
+        f.setTrashed(true);
+        borrados++;
+      } catch (e) {
+        Logger.log('No se pudo borrar ' + f.getName() + ': ' + e.message);
+      }
+    }
+  }
+  return borrados;
+}
+
+// ===== INSTALACIÓN DEL TRIGGER SEMANAL =====
+function instalarTriggerSemanal() {
+  // Borrar triggers previos de este script para no duplicar.
+  const triggers = ScriptApp.getProjectTriggers();
+  for (const t of triggers) {
+    if (t.getHandlerFunction() === 'hacerBackup') {
+      ScriptApp.deleteTrigger(t);
+    }
+  }
+
+  // Crear trigger nuevo: cada lunes 7am (hora del servidor Apps Script).
+  ScriptApp.newTrigger('hacerBackup')
+    .timeBased()
+    .onWeekDay(ScriptApp.WeekDay.MONDAY)
+    .atHour(HORA_TRIGGER)
+    .create();
+
+  Logger.log('Trigger semanal instalado: cada lunes ' + HORA_TRIGGER + ':00');
+  return 'Trigger instalado. Cada lunes a las ' + HORA_TRIGGER + ':00 se ejecuta hacerBackup().';
+}
+
+// ===== DESINSTALACIÓN =====
+function desinstalarTrigger() {
+  const triggers = ScriptApp.getProjectTriggers();
+  let borrados = 0;
+  for (const t of triggers) {
+    if (t.getHandlerFunction() === 'hacerBackup') {
+      ScriptApp.deleteTrigger(t);
+      borrados++;
+    }
+  }
+  return 'Triggers eliminados: ' + borrados;
+}
+
+// ===== LISTAR BACKUPS EXISTENTES =====
+function listarBackups() {
+  const folders = DriveApp.getFoldersByName(CARPETA_BACKUP_NOMBRE);
+  if (!folders.hasNext()) return 'No existe la carpeta RBD-Backups todavía.';
+  const carpeta = folders.next();
+  const archivos = carpeta.getFiles();
+  const lista = [];
+  while (archivos.hasNext()) {
+    const f = archivos.next();
+    lista.push({
+      nombre: f.getName(),
+      creado: f.getDateCreated(),
+      url: f.getUrl(),
+      id: f.getId()
+    });
+  }
+  lista.sort((a, b) => b.creado - a.creado);
+  Logger.log('Backups: ' + lista.length);
+  lista.forEach(b => Logger.log('  - ' + b.creado.toISOString() + ' | ' + b.nombre));
+  return lista;
+}

@@ -1,0 +1,1015 @@
+/* styles.css — RBD (Registro Básico de Datos) · Paleta vino Tatiana Ángeles */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Paleta principal — vino/guinda */
+  --primary: #6B1F2E;
+  --primary-dark: #4A1420;
+  --primary-light: #8A2A3D;
+  --vino-acento: #B5455A;
+  --bg: #FFFFFF;
+  --bg-deco: #FBF4F6;
+  --card: #ffffff;
+  --text: #1A1A1A;
+  --muted: #6B6B6B;
+  --border: #E8DDE0;
+
+  /* Semánticos */
+  --danger: #B33A3A;
+  --success: #2E7D5B;
+  --warn: #C8923A;
+
+  /* Prioridad */
+  --prio-alta: #6B1F2E;     /* vino fuerte */
+  --prio-media: #C8923A;    /* ámbar */
+  --prio-baja: #9A9A9A;     /* gris */
+
+  /* Estatus */
+  --est-pendiente: #9A9A9A;
+  --est-seguimiento: #C8923A;
+  --est-contactado: #8A2A3D;
+  --est-compromiso: #6B1F2E;
+  --est-cerrado: #2E7D5B;
+  --est-inactivo: #6B6B6B;   /* gris neutro: "no contar" */
+}
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg); color: var(--text);
+  font-size: 16px; line-height: 1.45;
+}
+/* Serif para branding (logo "TA", títulos de marca) */
+.font-brand {
+  font-family: "Georgia", "Playfair Display", "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+a { color: var(--primary); text-decoration: none; }
+button {
+  font: inherit; cursor: pointer; border: 0; border-radius: 8px;
+  padding: 12px 16px; min-height: 44px;
+  background: var(--primary); color: white;
+}
+button:hover { background: var(--primary-dark); }
+button.ghost { background: transparent; color: var(--primary); }
+button.danger { background: var(--danger); }
+input, select, textarea {
+  font: inherit; width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: white;
+}
+label { display: block; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
+label input, label select, label textarea { margin-top: 4px; color: var(--text); }
+
+/* LOGIN — fondo con foto Tatiana Ángeles */
+.login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #FBF4F6;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.login-body::before {
+  content: "";
+  position: absolute;
+  inset: -4%;
+  background: url('../assets/img/tatiana-bg.png') center center / cover no-repeat;
+  z-index: 0;
+  animation: kenburns 16s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.login-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(107, 31, 46, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.65) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes kenburns {
+  0%   { transform: scale(1.00) translate(0, 0); }
+  50%  { transform: scale(1.08) translate(-1%, -1%); }
+  100% { transform: scale(1.03) translate(1%, 1%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-body::before { animation: none; }
+}
+.login-card {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 32px 28px 24px;
+  border-radius: 16px;
+  width: min(380px, 92vw);
+  box-shadow: 0 20px 60px rgba(107, 31, 46, 0.25),
+              0 4px 12px rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(232, 221, 224, 0.6);
+  margin: auto;
+}
+.login-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.login-brand .monogram {
+  display: inline-block;
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.login-brand .name {
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.login-brand .tagline {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px;
+  font-family: "Georgia", serif;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  color: var(--primary-light);
+  text-transform: uppercase;
+}
+.login-brand .tagline::before,
+.login-brand .tagline::after {
+  content: "";
+  flex: 0 0 30px;
+  height: 1px;
+  background: var(--primary-light);
+  opacity: 0.5;
+}
+.login-card h1 { display: none; } /* oculto, branding está en .login-brand */
+.login-card .sub {
+  display: none; /* oculto, branding está en .login-brand */
+}
+.login-card button { width: 100%; }
+.error { color: var(--danger); margin-top: 12px; font-size: 14px; }
+
+/* 3 pilares decorativos */
+.login-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.login-pillars .pillar {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.login-pillars .pillar svg {
+  display: block; margin: 0 auto 4px;
+  color: var(--primary);
+}
+
+/* APP SHELL */
+.app-header {
+  position: sticky; top: 0; z-index: 5;
+  background: white; border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(107, 31, 46, 0.04);
+}
+.hdr-left { display: flex; align-items: center; gap: 12px; }
+.hdr-logo {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; font-weight: 700;
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 18px;
+  display: grid; place-items: center;
+  box-shadow: 0 2px 8px rgba(107, 31, 46, 0.25);
+  letter-spacing: -0.02em;
+}
+.hdr-title {
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 16px; font-weight: 600; color: var(--primary);
+  line-height: 1.2; letter-spacing: 0.01em;
+}
+.hdr-user {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted); margin-top: 2px;
+}
+.hdr-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.15);
+}
+.hdr-logout {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-deco); color: var(--primary);
+  padding: 8px 12px; min-height: 38px;
+  border-radius: 8px; font-size: 13px; font-weight: 500;
+}
+.hdr-logout:hover { background: #F2E4E8; }
+.app-main {
+  padding: 16px; padding-bottom: 88px;
+  max-width: 720px; margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.app-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('../assets/img/tatiana-bg.png') center center / cover no-repeat;
+  opacity: 0.10;
+  pointer-events: none;
+  z-index: 0;
+}
+.app-main > * {
+  position: relative;
+  z-index: 1;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* NAV INFERIOR */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 5;
+  background: white; border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding: 6px 0 env(safe-area-inset-bottom, 6px);
+  box-shadow: 0 -2px 8px rgba(107, 31, 46, 0.04);
+}
+.bottom-nav button {
+  background: transparent; color: var(--muted);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 12px; min-height: 56px; padding: 6px;
+  border-radius: 0;
+}
+.bottom-nav button.active {
+  color: var(--primary);
+  position: relative;
+}
+.bottom-nav button.active::before {
+  content: "";
+  position: absolute; top: 0; left: 25%; right: 25%;
+  height: 2px; background: var(--primary);
+  border-radius: 0 0 2px 2px;
+}
+.bottom-nav svg { width: 24px; height: 24px; }
+
+/* TARJETAS REGISTRO v2 — Tatiana Ángeles */
+.cards { display: grid; gap: 12px; }
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 14px 12px 18px;     /* aire-izq extra para el borde de prioridad */
+  position: relative;
+  transition: box-shadow .2s, border-color .2s, transform .2s;
+  cursor: pointer;
+  overflow: hidden;                /* recorta el borde-izq interno */
+}
+/* Borde-izq color según prioridad (rejilla) */
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--prio-baja);
+  transition: width .2s;
+}
+.card.prio-borde-alta::before  { background: var(--prio-alta);  width: 5px; }
+.card.prio-borde-media::before { background: var(--prio-media); width: 4px; }
+.card.prio-borde-baja::before  { background: var(--prio-baja);  width: 3px; }
+
+.card:hover {
+  border-color: var(--vino-acento);
+  box-shadow: 0 6px 18px rgba(107, 31, 46, 0.10);
+  transform: translateY(-1px);
+}
+.card:hover::before { width: 7px; }
+
+/* Header: avatar + nombre + geo */
+.card-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+.card-avatar {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 16px; font-weight: 700;
+  display: grid; place-items: center;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(107, 31, 46, 0.20);
+}
+.card-id { min-width: 0; flex: 1; }
+.card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0 0 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-geo {
+  font-size: 13px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Tags suaves */
+.card-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 0 0 10px;
+}
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--bg-deco);
+  color: var(--primary-dark);
+  border: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}
+
+/* Badges con dot */
+.card-badges {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 0 0 10px;
+}
+.badge-dot {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 12px;
+  background: #f1f3f4;
+  color: var(--text);
+}
+.badge-dot::before {
+  content: "";
+  width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+.badge-dot.prio-alta       { background: var(--prio-alta); color: white; }
+.badge-dot.prio-media      { background: var(--prio-media); color: white; }
+.badge-dot.prio-baja       { background: #D9C6CB; color: var(--primary-dark); }
+.badge-dot.est-pendiente   { background: #E5E0E2; color: var(--text); }
+.badge-dot.est-seguimiento { background: var(--est-seguimiento); color: white; }
+.badge-dot.est-contactado  { background: var(--est-contactado); color: white; }
+.badge-dot.est-compromiso  { background: var(--est-compromiso); color: white; }
+.badge-dot.est-cerrado     { background: var(--est-cerrado); color: white; }
+.badge-dot.est-inactivo    { background: var(--est-inactivo); color: white; }
+
+/* Próximo paso */
+.card-next {
+  display: flex; flex-direction: column;
+  gap: 2px;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  background: var(--bg-deco);
+  border-radius: 8px;
+  border-left: 2px solid var(--primary-light);
+}
+.card-aporta {
+  background: #FFF7F0;
+  border-left-color: var(--prio-media);
+}
+.card-next-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.card-next-text {
+  font-size: 13px;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* CTA inferior */
+.card-cta {
+  text-align: right;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--primary);
+  font-weight: 600;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border);
+  margin-top: 8px;
+}
+
+/* Compatibilidad con tarjetas heredadas si las hay (.card h3/.meta/.badges) */
+.card h3 { font-size: 16px; margin-bottom: 4px; color: var(--primary); }
+.card .meta { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.card .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* FAB — botón flotante "Guardar" durante edición de ficha */
+.fab-save {
+  position: fixed;
+  left: 50%; transform: translateX(-50%);
+  bottom: 76px;             /* encima de la bottom-nav (56px + safe area) */
+  z-index: 30;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 15px; font-weight: 600;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  box-shadow: 0 6px 18px rgba(107, 31, 46, 0.40),
+              0 2px 6px rgba(107, 31, 46, 0.22);
+  animation: fabIn .25s ease;
+}
+.fab-save:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  box-shadow: 0 8px 22px rgba(107, 31, 46, 0.50);
+  transform: translateX(-50%) translateY(-1px);
+}
+.fab-save.btn-loading {
+  /* No romper el centrado cuando aplica loading */
+  transform: translateX(-50%);
+}
+@keyframes fabIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+/* Mientras el FAB está visible, ocultamos el botón inline
+   para evitar duplicar "Guardar" en la página */
+.ficha-section .e-guardar-inline { display: none; }
+/* En desktop la bottom-nav está oculta, pegamos más el FAB */
+@media (min-width: 1024px) {
+  .fab-save { bottom: 24px; }
+}
+@media print {
+  .fab-save { display: none !important; }
+}
+
+.badge {
+  display: inline-block; font-size: 12px; padding: 3px 8px;
+  border-radius: 12px; background: #f1f3f4; color: var(--text);
+}
+.badge.prio-alta       { background: var(--prio-alta); color: white; }
+.badge.prio-media      { background: var(--prio-media); color: white; }
+.badge.prio-baja       { background: #D9C6CB; color: var(--primary-dark); }
+.badge.est-pendiente   { background: #E5E0E2; color: var(--text); }
+.badge.est-seguimiento { background: var(--est-seguimiento); color: white; }
+.badge.est-contactado  { background: var(--est-contactado); color: white; }
+.badge.est-compromiso  { background: var(--est-compromiso); color: white; }
+.badge.est-cerrado     { background: var(--est-cerrado); color: white; }
+.badge.est-inactivo    { background: var(--est-inactivo); color: white; }
+
+/* FORMULARIO */
+form .form-grid { display: grid; gap: 12px; }
+form button[type=submit] { width: 100%; margin-top: 8px; }
+.btn-primary-lg {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  font-size: 16px; font-weight: 600;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  box-shadow: 0 4px 14px rgba(107, 31, 46, 0.28);
+  letter-spacing: 0.2px;
+  margin-top: 16px !important;
+}
+.btn-primary-lg:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  box-shadow: 0 6px 18px rgba(107, 31, 46, 0.35);
+  transform: translateY(-1px);
+}
+.btn-primary-lg svg { flex-shrink: 0; }
+.empty { padding: 40px 16px; text-align: center; color: var(--muted); }
+
+/* INPUT "OTRO" — aparece debajo del select cuando se elige __otro__ */
+label input[type="text"][id$="-otro"] {
+  border-left: 3px solid var(--primary);
+  background: var(--bg-deco);
+  animation: slideDown .2s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FRANJA ACCIONES RÁPIDAS — debajo del hero, sobre el buscador */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 0 0 16px;
+}
+.qa-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  background: white;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 6px;
+  min-height: 64px;
+  font-size: 12px; font-weight: 500;
+  transition: border-color .15s, color .15s, background .15s, transform .15s;
+  cursor: pointer;
+}
+.qa-btn svg { width: 22px; height: 22px; }
+.qa-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--bg-deco);
+  transform: translateY(-1px);
+}
+.qa-btn.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(107, 31, 46, 0.22);
+}
+.qa-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.qa-btn:disabled:hover {
+  border-color: var(--border);
+  color: var(--muted);
+  background: white;
+  transform: none;
+}
+@media (min-width: 1024px) {
+  /* Desktop: la franja crece y la bottom-nav se oculta (ya no aplica) */
+  .quick-actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 0 0 22px;
+  }
+  .qa-btn { min-height: 72px; font-size: 13px; }
+  .qa-btn svg { width: 26px; height: 26px; }
+  .bottom-nav { display: none !important; }
+}
+/* Ocultar bottom-nav en >=1024px (sustituida por .quick-actions arriba) */
+@media (min-width: 1024px) {
+  .bottom-nav { display: none !important; }
+}
+
+/* BARRA DE BÚSQUEDA */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(107, 31, 46, 0.06) 0%, rgba(181, 69, 90, 0.04) 100%);
+  border: 1px solid rgba(232, 221, 224, 0.6);
+}
+.section-header svg { color: var(--primary); flex-shrink: 0; }
+.section-title {
+  font-family: "Georgia", "Playfair Display", serif;
+  font-size: 18px; font-weight: 600;
+  color: var(--primary);
+  line-height: 1.2;
+}
+.section-subtitle {
+  font-size: 12px; color: var(--muted);
+  margin-top: 2px;
+}
+
+/* HERO HOME — cabecera aspiracional Tatiana Ángeles */
+.hero-home {
+  text-align: left;
+  padding: 18px 4px 14px;
+  margin-bottom: 14px;
+}
+.hero-eyebrow {
+  font-family: "Georgia", "Playfair Display", "Times New Roman", serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--primary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.hero-tagline {
+  font-family: "Georgia", "Playfair Display", "Times New Roman", serif;
+  font-style: italic;
+  font-size: 22px; line-height: 1.25;
+  color: var(--primary-dark);
+  margin: 0 0 10px;
+  letter-spacing: -0.005em;
+}
+.hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0 0 16px;
+  max-width: 56ch;
+}
+.hero-divider {
+  width: 56px; height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+}
+/* Tablet/desktop: un poco más grande y con aire */
+@media (min-width: 768px) {
+  .hero-home { padding: 28px 6px 22px; margin-bottom: 20px; }
+  .hero-eyebrow { font-size: 14px; letter-spacing: 0.26em; }
+  .hero-tagline { font-size: 28px; }
+  .hero-sub { font-size: 15px; }
+  .hero-divider { width: 80px; }
+}
+/* Desktop con sidebar: alineado a la derecha del sidebar, respira */
+@media (min-width: 1024px) {
+  .hero-home { padding: 8px 0 14px; margin-bottom: 22px; }
+  .hero-tagline { font-size: 30px; }
+}
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 0 12px;
+  margin-bottom: 8px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-bar:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(107, 31, 46, 0.12);
+}
+.search-bar svg { color: var(--primary); flex-shrink: 0; }
+.search-bar input {
+  border: 0; padding: 14px 4px; min-height: 48px;
+  background: transparent;
+  font-size: 16px;
+}
+.search-bar input::placeholder { color: var(--muted); }
+.search-bar input:focus { outline: none; }
+
+/* FILTROS COLAPSABLES */
+.filters {
+  background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px 14px;
+  margin-bottom: 12px;
+}
+.filters > summary {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; padding: 12px 0;
+  font-size: 14px; font-weight: 500; color: var(--primary);
+  list-style: none;
+}
+.filters > summary::-webkit-details-marker { display: none; }
+.filters > summary svg { transition: transform .2s; }
+.filters[open] > summary svg { transform: rotate(180deg); }
+.filters .form-grid { gap: 8px; padding-bottom: 12px; }
+
+/* META DE RESULTADOS */
+.results-meta {
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 8px; padding: 0 4px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed; left: 50%; top: 24px; transform: translateX(-50%) translateY(-20px);
+  background: var(--primary-dark); color: white; padding: 12px 16px;
+  border-radius: 8px; font-size: 14px; z-index: 100;
+  opacity: 0; transition: opacity .2s, transform .2s;
+  max-width: 90vw;
+  box-shadow: 0 6px 18px rgba(107, 31, 46, 0.3);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--success); }
+.toast.persistent { cursor: pointer; }
+
+/* BOTÓN CARGANDO */
+button.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+button.btn-loading::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 20px; height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ACCIONES POST-GUARDADO */
+.post-save {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.post-save button { flex: 1; }
+
+/* FORM STICKY FOOTER EN MÓVIL */
+@media (max-width: 767px) {
+  #frm-nuevo {
+    padding-bottom: 80px;
+  }
+}
+
+/* FICHA */
+.ficha-section {
+  background: white; border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; margin-bottom: 12px;
+}
+.ficha-section h4 {
+  font-size: 12px; color: var(--primary);
+  text-transform: uppercase; margin-bottom: 8px;
+  letter-spacing: 0.08em; font-weight: 600;
+}
+.ficha-section p { margin-bottom: 4px; }
+.crono-item {
+  border-left: 3px solid var(--primary-light);
+  padding-left: 10px; margin-bottom: 10px;
+}
+.crono-item .fecha { font-size: 12px; color: var(--muted); }
+
+/* SIDEBAR CON FRASES — oculto en móvil, visible en desktop */
+.sidebar {
+  display: none;
+}
+@media (min-width: 1024px) {
+  body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    /* FIX 2026-09-01: "auto 1fr" + overflow:hidden recortaban .app-main en
+       escritorio y no dejaban bajar al botón Guardar (mismo bug corregido
+       en ATLAS el 30-08). Con filas "auto auto" el contenido crece y la
+       página baja. La sidebar se mantiene igual. */
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main";
+  }
+  .app-main { overflow: visible; }
+  .sidebar {
+    display: flex;
+    grid-area: sidebar;
+    min-height: 100vh;
+    padding: 32px 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    box-shadow: 4px 0 24px rgba(107, 31, 46, 0.15);
+  }
+  .sidebar-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(74, 20, 32, 0.85) 0%, rgba(107, 31, 46, 0.92) 50%, rgba(138, 42, 61, 0.95) 100%),
+      url('../assets/img/tatiana-bg.png') center top / cover no-repeat;
+    background-blend-mode: normal;
+    z-index: 0;
+  }
+  .sidebar-inner {
+    position: relative;
+    z-index: 1;
+    display: flex; flex-direction: column; gap: 24px;
+    width: 100%; height: 100%;
+  }
+  .sidebar-brand {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+  }
+  .sidebar-monogram {
+    font-family: "Georgia", "Playfair Display", serif;
+    font-size: 48px; font-weight: 700; line-height: 1;
+    letter-spacing: -0.02em;
+    color: white;
+  }
+  .sidebar-name {
+    margin-top: 10px;
+    font-family: "Georgia", serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: white;
+  }
+  .sidebar-tagline {
+    margin-top: 6px;
+    font-family: "Georgia", serif;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  .sidebar-phrases {
+    flex: 1;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 200px;
+  }
+  .sidebar-phrase {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 8px;
+    font-family: "Georgia", serif;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 1.5;
+    text-align: center;
+    color: rgba(255,255,255,0.92);
+    opacity: 0;
+    transition: opacity .9s ease;
+    pointer-events: none;
+  }
+  .sidebar-phrase::before {
+    content: "\201C";
+    font-size: 48px;
+    line-height: 1;
+    color: rgba(255,255,255,0.3);
+    margin-right: 4px;
+    font-family: "Georgia", serif;
+  }
+  .sidebar-phrase::after {
+    content: "\201D";
+    font-size: 48px;
+    line-height: 1;
+    color: rgba(255,255,255,0.3);
+    margin-left: 4px;
+    font-family: "Georgia", serif;
+    align-self: flex-end;
+  }
+  .sidebar-phrase.active { opacity: 1; }
+  .sidebar-footer {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+  .sidebar-dots {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .sidebar-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: background .3s, transform .3s;
+  }
+  .sidebar-dot.active {
+    background: white;
+    transform: scale(1.3);
+  }
+  .sidebar-copyright {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .app-header { grid-area: header; }
+  .app-main {
+    grid-area: main;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px;
+    padding-bottom: 88px;
+    width: 100%;
+  }
+}
+
+/* RESPONSIVE */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .app-main { padding: 24px; }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .login-body {
+    background-position: right center;
+  }
+}
+@media (min-width: 1280px) {
+  .cards { grid-template-columns: repeat(3, 1fr); }
+  .login-body {
+    background-position: right center;
+  }
+}
+
+/* MODAL — confirmación inactivar */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(20, 12, 14, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn .15s ease;
+}
+.modal-card {
+  background: white; border-radius: 14px;
+  padding: 24px 22px; max-width: 420px; width: 100%;
+  box-shadow: 0 24px 64px rgba(74, 20, 32, 0.45);
+  border-top: 4px solid var(--primary);
+  animation: pop .18s ease;
+}
+.modal-title {
+  font-family: "Georgia", serif;
+  font-size: 18px; font-weight: 600;
+  color: var(--primary); margin-bottom: 8px;
+}
+.modal-text {
+  font-size: 14px; color: var(--text);
+  margin-bottom: 14px; line-height: 1.5;
+}
+.modal-text b { color: var(--primary-dark); }
+.modal-input {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 14px; margin-bottom: 12px;
+}
+.modal-check {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 16px; cursor: pointer;
+}
+.modal-check input { margin-top: 2px; }
+.modal-actions {
+  display: flex; gap: 8px;
+}
+.modal-actions button { flex: 1; }
+.modal-danger {
+  background: var(--danger); color: white;
+  min-height: 44px;
+}
+.modal-danger:hover { background: #8a2828; }
+.modal-danger:disabled {
+  background: #C4B5B5; cursor: not-allowed; opacity: 0.6;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* IMPRESIÓN — limpio para papel/PDF */
+@media print {
+  body { background: white; font-size: 11pt; color: #000; }
+  .app-header,
+  .bottom-nav,
+  .filters,
+  .search-bar,
+  .btn-primary-lg,
+  .post-save,
+  #btn-editar,
+  #btn-volver,
+  #btn-logout,
+  #btn-nuevo-seg,
+  #btn-limpiar-f,
+  #btn-ver-mas,
+  #btn-inactivar,
+  #btn-reactivar,
+  #seg-form-wrap {
+    display: none !important;
+  }
+  .app-main { padding: 0; max-width: 100%; }
+  .app-main::before { display: none !important; }
+  .section { display: none !important; }
+  .section.print-active { display: block !important; }
+  .card {
+    border: 1px solid #999;
+    box-shadow: none;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    transform: none !important;
+  }
+  .card-avatar { box-shadow: none; }
+  .card-next-text { display: block; -webkit-line-clamp: unset; overflow: visible; }
+  .card-cta { display: none; }
+  .ficha-section {
+    border: 1px solid #999;
+    box-shadow: none;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+  .print-header h2 { font-size: 14pt; margin: 0; }
+  .print-header .sub { font-size: 9pt; color: #555; margin-top: 2px; }
+  .crono-item { border-left-color: #000 !important; }
+  .badge { border: 1px solid #666; }
+  a { color: #000; text-decoration: underline; }
+}

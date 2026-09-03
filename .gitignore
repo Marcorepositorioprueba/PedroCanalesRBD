@@ -1,0 +1,44 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Local env / secrets
+.env
+.env.local
+*.local.js
+config.local.js
+
+# Backend Apps Script: codigo.gs y appsscript.json SÍ se versionan
+# (son el código fuente del backend que vive en disco)
+# semilla.txt también.
+# Solo se excluye cualquier archivo temporal o variant.
+
+# Builds / dist
+dist/
+build/
+node_modules/
+
+# GitHub Pages output (si usas jekyll u otro)
+.jekyll-cache/
+_site/
+
+# Archivos temporales de usuario
+*.bak
+*.tmp
+*.temp
+~$*
+app_inline.js

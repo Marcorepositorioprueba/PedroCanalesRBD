@@ -1,0 +1,403 @@
+C:\Users\leonm\proyectosmarco\Electoralangeles>python -m http.server 8080
+http://localhost:8080/index.html
+
+
+=========================================================
+REGISTRO BÁSICO DE DATOS (RBD) — V1
+Antes: MVT (Mapa de Vinculación Territorial)
+Hoja de Ruta · Campaña Tatiana Ángeles — Hidalgo
+=========================================================
+
+Stack acordado
+--------------
+- Frontend: HTML + CSS + JavaScript puro (sin frameworks).
+- Backend: Google Apps Script (Web App, doPost/doGet).
+- Persistencia: Google Sheets (7 hojas: REGISTROS, MUNICIPIOS,
+  LOCALIDADES, USUARIOS, CATALOGOS, SEGUIMIENTOS, SESIONES).
+- Deploy: GitHub Pages (estático) + Apps Script como API.
+- Auth: usuario/clave contra hoja USUARIOS (SHA-256 con salt).
+- Sesión: token UUID hex 32 chars en hoja SESIONES, expira 7 días.
+- Sin BD externa, sin Node, sin Docker, sin frameworks.
+
+Estructura de carpetas objetivo
+-------------------------------
+Electoralangeles/
+├── index.html              (login con foto Tatiana de fondo)
+├── app.html                (SPA: home/búsqueda + nuevo + ficha + sidebar)
+├── css/
+│   └── styles.css          (paleta vino Tatiana Ángeles)
+├── js/
+│   ├── config.js           (URL del Web App Apps Script)
+│   ├── auth.js             (login + sesión localStorage + logout)
+│   ├── api.js              (capa de llamadas al backend + manejo red)
+│   └── ui.js               (toasts, badges, loading)
+├── assets/
+│   └── img/
+│       └── tatiana-bg.png  (imagen de fondo login y sidebar/watermark)
+├── codigo.txt              (backend Apps Script — copiar a Apps Script)
+├── semilla.txt             (script de inicialización del Sheet)
+├── diagnostico.gs          (utilidad de diagnóstico)
+├── .gitignore
+├── README.md
+└── ROADMAP.txt             (este archivo)
+
+=========================================================
+DÍA 1 — FUNDACIÓN + CAPTURA + CONSULTA BÁSICA
+=========================================================
+
+BLOQUE 1 — FUNDACIÓN  (Día 1, mañana)
+-------------------------------------
+[ ] 1.1 Google Sheets: crear libro con 6 hojas
+        REGISTROS    | MUNICIPIOS | LOCALIDADES
+        USUARIOS     | CATALOGOS  | SEGUIMIENTOS
+    Columnas exactas: ver Anexo 1.
+[ ] 1.2 Sembrar catálogos mínimos
+        - 1 usuario admin (hash de password)
+        - Municipios del territorio objetivo
+        - Localidades base (las más relevantes)
+        - Catálogos: perfiles, tipos de vinculación, prioridades, estatus
+[ ] 1.3 Apps Script: codigo.gs
+        - doGet(e): router (action=login|catalogos|buscar|obtener)
+        - doPost(e): router (action=crear|actualizar|seguimiento)
+        - Validación de token en cada llamada (excepto login)
+        - try/catch + respuesta JSON estandarizada: {ok, data, error}
+[ ] 1.4 Deploy Apps Script como Web App. Copiar URL → js/config.js.
+[ ] 1.5 index.html con login funcional.
+[ ] 1.6 app.html esqueleto: header + nav inferior + secciones vacías.
+
+PRUEBA BLOQUE 1
+  - Login OK con admin.
+  - /catalogos devuelve municipios, localidades, perfiles, etc.
+  - Sesión persiste en localStorage y se invalida con logout.
+
+BLOQUE 2 — CAPTURA  (Día 1, tarde)
+----------------------------------
+[ ] 2.1 captura.js: formulario con los 12 campos clave (ver Anexo 2).
+[ ] 2.2 Selects cargados desde /catalogos.
+[ ] 2.3 Validación cliente (requeridos) + validación servidor.
+[ ] 2.4 action=crear en Apps Script → REGISTROS.appendRow.
+[ ] 2.5 Toast éxito + botones "ver ficha" / "capturar otro".
+
+PRUEBA BLOQUE 2
+  - Capturar 3 registros reales.
+  - Aparecen en hoja REGISTROS.
+  - Persisten tras refrescar.
+
+BLOQUE 3 — CONSULTA BÁSICA  (Día 1, tarde-noche)
+------------------------------------------------
+[ ] 3.1 consulta.js: barra de búsqueda de texto + filtro municipio.
+[ ] 3.2 action=buscar en Apps Script (filtros en servidor).
+[ ] 3.3 Listado en tarjetas (mobile-first).
+[ ] 3.4 Tap en tarjeta → navega a ficha individual.
+[ ] 3.5 Botón "cargar más" (paginación simple, no scroll infinito).
+
+PRUEBA BLOQUE 3
+  - Buscar por texto (nombre) → resultados correctos.
+  - Filtrar por municipio → filtra.
+  - Sin filtros → trae los N más recientes.
+
+=========================================================
+DÍA 2 — CONSULTA COMPLETA + SEGUIMIENTO + DISEÑO + AUDITORÍA
+=========================================================
+
+BLOQUE 4 — CONSULTA COMPLETA + SEGUIMIENTO  (Día 2, mañana)
+-----------------------------------------------------------
+[ ] 4.1 Agregar filtros: localidad, perfil, prioridad, estatus.
+        Política V1: combinar máx. 2 filtros a la vez (AND).
+[ ] 4.2 ficha.js: vista individual del registro (todos los campos).
+[ ] 4.3 Botón "Agregar seguimiento": fecha, próximo paso, observación,
+        nuevo estatus.
+[ ] 4.4 action=seguimiento → append a hoja SEGUIMIENTOS con FK.
+[ ] 4.5 Cronología en ficha (más reciente arriba).
+[ ] 4.6 action=actualizar para editar campos base del registro.
+
+PRUEBA BLOQUE 4
+  - 2 seguimientos en un registro → se ven en ficha.
+  - Cambiar estatus → refleja en REGISTROS y SEGUIMIENTOS.
+  - Filtros combinados funcionan.
+
+BLOQUE 5 — DISEÑO  (Día 2, mediodía)
+-------------------------------------
+[✓] 5.1 styles.css: mobile-first, tipografía, paleta consistente.
+        Paleta vino Tatiana Ángeles (#6B1F2E) + serif para branding.
+[✓] 5.2 Tarjetas: bordes suaves, jerarquía nombre > meta > badges.
+[✓] 5.3 Botones grandes (min 44px alto), buen contraste, focus visible.
+[✓] 5.4 Nav inferior fija con 4 iconos SVG inline (inicio, nuevo,
+        buscar, ficha/salir).
+[✓] 5.5 Estados: loading, empty, error, success (toast).
+[✓] 5.6 Responsive: 360px, 768px, 1280px.
+[✓] 5.7 Sin CDNs, todo local.
+
+PRUEBA BLOQUE 5
+  - Se ve decente en móvil y escritorio.
+  - Sin scroll horizontal en 360px.
+  - Sin dependencias externas.
+  - Sesión 2026-08-09: rebranding Tatiana Ángeles aplicado.
+
+BLOQUE 6 — AUDITORÍA FINAL  (Día 2, tarde)
+------------------------------------------
+[✓] 6.1 Seguridad:
+        - Validar TODAS las entradas en servidor.
+        - Token obligatorio en cada llamada excepto login.
+        - Logout limpia localStorage.
+        - Hash de password en USUARIOS (no texto plano).
+        - Cero secretos en frontend.
+[✓] 6.2 Robustez:
+        - Manejo de errores de red (toast "sin conexión").
+        - Validar respuesta del backend antes de usar datos.
+        - Estados vacíos amigables en consulta y ficha.
+[✓] 6.3 Consistencia frontend ↔ backend:
+        - Nombres de campos idénticos en JSON, Sheets y UI.
+        - Tipos (string/number/date) coherentes.
+[✓] 6.4 Persistencia:
+        - Confirmar escritura leyendo inmediatamente después.
+[✓] 6.5 GitHub:
+        - .gitignore (excluir config.local.js si existiera).
+        - README con instrucciones de deploy Apps Script + Pages.
+        - Subir a repo.
+
+PRUEBA BLOQUE 6
+  - Auditoría sin agregar features nuevas.
+  - Cualquier bug se corrige y se vuelve a probar.
+  - Capturar, consultar, seguir y editar funcionan sin errores.
+  - Sesión 2026-08-09: console.log sensibles limpiados, .gitignore y
+    README creados.
+
+=========================================================
+RECORTES APLICADOS PARA 2 DÍAS
+=========================================================
+- Filtros: combinar máx. 2 a la vez (AND).
+- Paginación: botón "ver más", no scroll infinito.
+- Auth: token en localStorage sin expiración automática (logout manual).
+- Iconos: solo 4 SVG inline hechos a mano (sin sets externos).
+- Sin tests automatizados: pruebas manuales al final de cada bloque.
+
+LO QUE NO SE RECORTA
+- Validación servidor.
+- Token de sesión obligatorio.
+- Mobile-first.
+- Los 12 campos completos.
+- Ficha + seguimientos + edición.
+- .gitignore + README.
+
+=========================================================
+ANEXO 1 — COLUMNAS DE HOJAS
+=========================================================
+REGISTROS
+  id | fecha_creacion | municipio | localidad | nombre | organizacion
+  | perfil | tipo_vinculacion | que_aporta | prioridad | motivo_prioridad
+  | proximo_paso | fecha_seguimiento | estatus | observaciones
+  | creado_por | actualizado_en
+
+MUNICIPIOS
+  id | nombre | clave
+
+LOCALIDADES
+  id | municipio_id | nombre | clave
+
+USUARIOS
+  id | usuario | password_hash | nombre | rol | activo | created_at
+
+CATALOGOS (una hoja, bloques por tipo)
+  tipo | valor | orden
+  Tipos: perfil, tipo_vinculacion, prioridad, estatus
+
+SEGUIMIENTOS
+  id | registro_id | fecha | estatus_anterior | estatus_nuevo
+  | proximo_paso | observaciones | usuario
+
+=========================================================
+ANEXO 2 — CAMPOS DEL FORMULARIO DE CAPTURA (12 clave)
+=========================================================
+1.  Municipio
+2.  Localidad
+3.  Nombre
+4.  Organización / sector
+5.  Perfil
+6.  Tipo de vinculación
+7.  Qué puede aportar
+8.  Prioridad
+9.  Motivo de prioridad
+10. Próximo paso
+11. Fecha de seguimiento
+12. Observaciones
+
+=========================================================
+FUERA DE ALCANCE (V2)
+=========================================================
+IA, chatbot, mapas interactivos, GPS, WhatsApp, correo,
+notificaciones push, PWA avanzada, modo offline, PDF,
+Excel avanzado, gráficas, georreferenciación, análisis
+predictivo, roles complejos, microservicios, frameworks,
+BD adicional, Docker, Node server, auth empresarial.
+
+=========================================================
+REGLAS DE TRABAJO
+=========================================================
+1. Analizar estructura antes de modificar.
+2. No reconstruir archivos si basta con editar una sección.
+3. No generar código innecesario.
+4. Reutilizar funciones/componentes existentes.
+5. No agregar features no solicitadas.
+6. Preferir HTML/CSS/JS nativo sobre dependencias.
+7. Probar cada módulo antes de continuar.
+8. Corregir errores antes de seguir.
+9. Mantener contexto centrado en este proyecto.
+10. Terminar V1 funcional > perfeccionar detalles.
+
+Antes de cada etapa: resumen breve → ejecutar.
+Sin explicaciones extensas.
+
+=========================================================
+MÉTODO DE TRABAJO POR SESIÓN
+=========================================================
+Cada sesión sigue este orden:
+1. Tú dices "avanzar" o el nombre del bloque a trabajar.
+2. Yo entrego lo que toca en esa sesión (código, datos, instrucciones).
+3. Tú lo aplicas/pruebas y me dices qué pasó.
+4. Registramos avance abajo en "Bitácora de avance".
+5. Siguiente sesión parte del estado anterior, sin re-explicar.
+
+Los archivos del proyecto viven en:
+  C:\Users\leonm\proyectosmarco\Electoralangeles\
+
+
+
+
+
+
+
+=========================================================
+INICIALIZACIÓN DEL SHEET (Opción B confirmada)
+=========================================================
+Método: Apps Script semilla que se ejecuta una sola vez.
+
+Pasos que harás tú:
+1. Crear un Sheet nuevo en blanco (nombre sugerido: "MVT DB").
+2. Abrir Extensiones → Apps Script.
+3. Pegar el contenido de semilla.gs que te entregaré.
+4. Ejecutar la función inicializar() una vez.
+5. Aceptar los permisos cuando los pida.
+
+Lo que hace el script al ejecutarse:
+- Crea las 6 hojas (REGISTROS, MUNICIPIOS, LOCALIDADES, USUARIOS,
+  CATALOGOS, SEGUIMIENTOS) con los headers exactos del Anexo 1.
+- Si ya existen, las limpia y recrea (te avisa antes).
+- Puebla datos semilla:
+    * 1 usuario admin (username/password que me pases; guarda hash).
+    * Municipios y localidades (lista base genérica o personalizada).
+    * Catálogos: perfiles, tipos de vinculación, prioridades, estatus.
+- Headers en negrita y fila 1 congelada.
+
+Datos que me pasarás antes de generar semilla.gs:
+- Username del admin.
+- Password inicial (lo guardas tú, cámbialo después).
+- Municipios personalizados o lista base genérica.
+
+Después de ejecutar inicializar():
+- Me confirmas que las 6 hojas existen con headers y datos.
+- Sigo con codigo.gs (backend) → deploy Web App → login.
+
+=========================================================
+BITÁCORA DE AVANCE
+=========================================================
+Sesión | Bloque | Estado | Notas
+-------|--------|--------|------
+--     | --     | --     | Proyecto creado. Estructura de carpetas y ROADMAP definidos. Listo para arrancar Bloque 1.
+2026-08-09 | 1-4   | ✅ Cerrado | Backend + captura + consulta + ficha + seguimientos + edición funcionando.
+2026-08-09 | 5-6   | ✅ Cerrado | Robustez (expiración + paginación + red) + imprimir + permisos + auditoría + .gitignore + README.
+2026-08-09 | 5     | ✅ Cerrado | Rediseño visual Tatiana Ángeles (paleta vino, monograma TA, 3 pilares).
+2026-08-09 | 5     | ✅ Cerrado | Sidebar desktop con 25 frases rotativas (cada 6s) + watermark app-main + login con foto Tatiana + Ken Burns.
+2026-08-10 | 5     | ✅ Cerrado | Login card centrado (flex margin:auto, background-position:right center). Salir → index.html (try/catch).
+
+=========================================================
+PENDIENTES — SESIÓN 2026-08-10 (pausado a pedido del usuario)
+=========================================================
+
+🚨 P0 — SyntaxError bloqueante en app.html
+------------------------------------------
+Síntoma reportado: "Uncaught SyntaxError: unexpected token: identifier"
+al abrir app.html en navegador, tras login como admin01.
+
+Ya validado y descartado:
+  ✓ JS de app.html (líneas 246-951) pasa `node --check` y `new Function()`.
+  ✓ config.js, ui.js, api.js, auth.js también validan OK.
+  ✓ HTML well-formed (tag <script> cierra en línea 952).
+
+Hipótesis restantes (a checar MAÑANA al retomar):
+  1. El usuario cargó la versión vieja cacheada — Ctrl+F5 con DevTools
+     abierto para forzar reload.
+  2. Orden de carga de los JS externos: config.js → ui.js → api.js →
+     auth.js. ¿Falta agregar wait de DOMContentLoaded antes de App.init?
+     App.init() se llama en línea 951, después de window.onload implícito.
+     Si el browser parsea el inline script antes de que carguen los otros,
+     falla. Mover `App.init()` a un `DOMContentLoaded` listener.
+  3. ¿Existe un archivo extra o un script duplicado?
+     Verificar con: `grep -rn "App.init" js/ app.html`
+  4. Verificar la consola real con la URL exacta (no file://, debe ser
+     http://localhost:8765/app.html tras `python -m http.server 8765`).
+
+Acción al retomar:
+  - Abrir DevTools (F12) en http://localhost:8765/app.html tras login.
+  - Capturar el mensaje completo y la línea/columna exacta.
+  - Si no aparece línea, expandir el trace con "Pause on exceptions".
+
+🟡 P1 — Verificar tras fixear SyntaxError
+------------------------------------------
+  - [ ] Botón "Salir" navega a index.html (handler ya con try/catch).
+  - [ ] Botón "✎ Editar" visible en ficha (rol=admin01).
+  - [ ] Sidebar con frases rotando (visible solo ≥1024px).
+  - [ ] Watermark en app-main visible (opacity 0.10).
+  - [ ] Imprimir ficha + listado (window.print + @media print).
+  - [ ] Paginación "Ver más" (20/pág).
+
+🟢 P2 — GitHub Pages + deploy
+-----------------------------
+  1. `git init` en C:\Users\leonm\proyectosmarco\Electoralangeles
+  2. Primer commit con TODO el estado (Bloques 1-6 + diseño).
+  3. Crear repo en GitHub (cuenta del usuario).
+  4. `git remote add origin <url>` + `git push -u origin main`.
+  5. Settings → Pages → main / root → esperar 1 min.
+  6. Comprobar: https://<user>.github.io/<repo>/index.html
+  7. URL final Apps Script (Web App /exec) ya debe estar en js/config.js.
+
+🟣 P3 — PWA-style polish (cuando lo anterior esté verde)
+-------------------------------------------------------
+  - [ ] Manifest.json + iconos (instalable en móvil).
+  - [ ] Meta theme-color (#6B1F2E) + apple-touch-icon.
+  - [ ] Service worker mínimo para offline-shell (no cache de datos).
+  - [ ] Add to Home Screen prompt sutil.
+
+=========================================================
+CONTEXTO RÁPIDO PARA MAÑANA (no recargar de cero)
+=========================================================
+
+Ubicación: C:\Users\leonm\proyectosmarco\Electoralangeles
+Servidor dev: `python -m http.server 8765` desde esa carpeta.
+Login: index.html → admin01 / admin01 (rol=admin en hoja USUARIOS).
+Salt backend: 'MVT_HGO_2026' (codigo.txt + semilla.txt).
+Sesión: token UUID hex 32 chars en hoja SESIONES, TTL 7 días.
+localStorage key: 'mvt_session_v1'.
+
+Archivos clave:
+  - app.html (SPA, ~954 líneas, sidebar+header+4 secciones)
+  - css/styles.css (paleta vino #6B1F2E, mobile-first, sidebar ≥1024px)
+  - js/auth.js (login + sesión, valida formato token, expiración deleg.)
+  - js/api.js (capa API, manejo red, code=AUTH redirige a index.html)
+  - js/ui.js (toasts, badges, loading, emptyState)
+  - js/config.js (URL del Web App Apps Script)
+  - codigo.txt (backend Apps Script: doGet/doPost routers)
+  - semilla.txt (inicialización de hojas, inic. usuarios+catálogos)
+  - README.md (deploy paso a paso)
+  - .gitignore (excluye config.local.js si existiera)
+  - assets/img/tatiana-bg.png (fondo login + watermark app)
+
+Si hay SyntaxError mañana:
+  1. Primero confirmar URL exacta (no file://).
+  2. DevTools → Sources → buscar el archivo problemático.
+  3. Si vuelve a no ser identificable la línea, cargar el HTML entero
+     en una pestaña nueva con ?cachebust=1 y revisar la consola.
+
+=========================================================
+FIN DEL ROADMAP
+=========================================================

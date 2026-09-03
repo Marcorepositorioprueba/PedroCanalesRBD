@@ -1,0 +1,226 @@
+/**
+ * semilla.gs — Mapa de Vinculación Territorial V1
+ *
+ * PASO 1. Ejecuta inicializar()    → crea hojas + admin + catálogos + municipios.
+ * PASO 2. Crea hoja "_LOCALIDADES_SEED" (A:NOM_MUN B:LOC C:NOM_LOC).
+ * PASO 3. Pega la tabla de ~3000 localidades.
+ * PASO 4. Ejecuta importarLocalidades().
+ */
+
+// ===== CONFIG =====
+const ADMIN_USERNAME = 'marco';
+const ADMIN_PASSWORD = 'admin01';
+const ADMIN_NAME     = 'Administrador';
+const APP_SALT       = 'MVT_HGO_2026';
+
+// ===== CATÁLOGOS =====
+const CATALOGOS = {
+  perfil: [
+    'Líder comunitario','Funcionario público','Empresario',
+    'Académico / Educador','Periodista / Comunicador','Líder religioso',
+    'Deportista','Productor rural','Comerciante','Artesano'
+  ],
+  tipo_vinculacion: [
+    'Política','Social','Económica','Cultural','Deportiva',
+    'Educativa','Religiosa','Productiva'
+  ],
+  prioridad: ['Alta','Media','Baja'],
+  estatus: [
+    'Por contactar','En seguimiento','Contactado',
+    'Compromiso adquirido','Cerrado'
+  ],
+  sector: [
+    'Jóvenes','Mujeres','Políticos','Empresarial',
+    'Educativo','Comunitario','Religioso','Deportivo',
+    'Productivo','Cultural','Otros'
+  ]
+};
+
+// ===== MUNICIPIOS DE HIDALGO (84) =====
+const MUNICIPIOS = [
+  [1,'Acatlán','001'],[2,'Acaxochitlán','002'],[3,'Actopan','003'],
+  [4,'Agua Blanca de Iturbide','004'],[5,'Ajacuba','005'],
+  [6,'Alfajayucan','006'],[7,'Almoloya','007'],[8,'Apan','008'],
+  [9,'El Arenal','009'],[10,'Atitalaquia','010'],[11,'Atlapexco','011'],
+  [12,'Atotonilco el Grande','012'],[13,'Atotonilco de Tula','013'],
+  [14,'Calnali','014'],[15,'Cardonal','015'],
+  [16,'Cuautepec de Hinojosa','016'],[17,'Chapantongo','017'],
+  [18,'Chapulhuacán','018'],[19,'Chilcuautla','019'],
+  [20,'Eloxochitlán','020'],[21,'Emiliano Zapata','021'],
+  [22,'Epazoyucan','022'],[23,'Francisco I. Madero','023'],
+  [24,'Huasca de Ocampo','024'],[25,'Huautla','025'],
+  [26,'Huazalingo','026'],[27,'Huehuetla','027'],
+  [28,'Huejutla de Reyes','028'],[29,'Huichapan','029'],
+  [30,'Ixmiquilpan','030'],[31,'Jacala de Ledezma','031'],
+  [32,'Jaltocán','032'],[33,'Juárez Hidalgo','033'],[34,'Lolotla','034'],
+  [35,'Metepec','035'],[36,'San Agustín Metzquititlán','036'],
+  [37,'Metztitlán','037'],[38,'Mineral del Chico','038'],
+  [39,'Mineral del Monte','039'],[40,'La Misión','040'],
+  [41,'Mixquiahuala de Juárez','041'],[42,'Molango de Escamilla','042'],
+  [43,'Nicolás Flores','043'],[44,'Nopala de Villagrán','044'],
+  [45,'Omitlán de Juárez','045'],[46,'San Felipe Orizatlán','046'],
+  [47,'Pacula','047'],[48,'Pachuca de Soto','048'],[49,'Pisaflores','049'],
+  [50,'Progreso de Obregón','050'],[51,'Mineral de la Reforma','051'],
+  [52,'San Agustín Tlaxiaca','052'],[53,'San Bartolo Tutotepec','053'],
+  [54,'San Salvador','054'],[55,'Santiago de Anaya','055'],
+  [56,'Santiago Tulantepec de Lugo Guerrero','056'],[57,'Singuilucan','057'],
+  [58,'Tasquillo','058'],[59,'Tecozautla','059'],
+  [60,'Tenango de Doria','060'],[61,'Tepeapulco','061'],
+  [62,'Tepehuacán de Guerrero','062'],[63,'Tepeji del Río de Ocampo','063'],
+  [64,'Tepetitlán','064'],[65,'Tetepango','065'],
+  [66,'Villa de Tezontepec','066'],[67,'Tezontepec de Aldama','067'],
+  [68,'Tianguistengo','068'],[69,'Tizayuca','069'],[70,'Tlahuelilpan','070'],
+  [71,'Tlahuiltepa','071'],[72,'Tlanalapa','072'],[73,'Tlanchinol','073'],
+  [74,'Tlaxcoapan','074'],[75,'Tolcayuca','075'],[76,'Tula de Allende','076'],
+  [77,'Tulancingo de Bravo','077'],[78,'Xochiatipan','078'],
+  [79,'Xochicoatlán','079'],[80,'Yahualica','080'],
+  [81,'Zacualtipán de Ángeles','081'],[82,'Zapotlán de Juárez','082'],
+  [83,'Zempoala','083'],[84,'Zimapán','084']
+];
+
+// ===== HELPERS =====
+function _hash(pwd) {
+  const raw = APP_SALT + ':' + pwd;
+  const bytes = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, raw, Utilities.Charset.UTF_8
+  );
+  return bytes.map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('').toUpperCase();
+}
+
+function _crearHoja(ss, nombre, headers) {
+  let sh = ss.getSheetByName(nombre);
+  if (sh) ss.deleteSheet(sh);
+  sh = ss.insertSheet(nombre);
+  sh.getRange(1, 1, 1, headers.length).setValues([headers])
+    .setFontWeight('bold').setBackground('#E8EAED');
+  sh.setFrozenRows(1);
+  return sh;
+}
+
+// ===== INICIALIZADOR =====
+function inicializar() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  _crearHoja(ss,'REGISTROS',[
+    'id','fecha_creacion','municipio','localidad','nombre','organizacion',
+    'perfil','tipo_vinculacion','que_aporta','prioridad','motivo_prioridad',
+    'proximo_paso','fecha_seguimiento','estatus','observaciones',
+    'creado_por','actualizado_en'
+  ]);
+  _crearHoja(ss,'MUNICIPIOS',['id','nombre','clave']);
+  _crearHoja(ss,'LOCALIDADES',['id','municipio_id','nombre','clave']);
+  _crearHoja(ss,'USUARIOS',['id','usuario','password_hash','nombre','rol','activo','created_at']);
+  _crearHoja(ss,'CATALOGOS',['tipo','valor','orden']);
+  _crearHoja(ss,'SEGUIMIENTOS',[
+    'id','registro_id','fecha','estatus_anterior','estatus_nuevo',
+    'proximo_paso','observaciones','usuario'
+  ]);
+
+  ss.getSheetByName('MUNICIPIOS')
+    .getRange(2, 1, MUNICIPIOS.length, 3).setValues(MUNICIPIOS);
+
+  const catRows = [];
+  for (const tipo in CATALOGOS) {
+    CATALOGOS[tipo].forEach((v, i) => catRows.push([tipo, v, i + 1]));
+  }
+  ss.getSheetByName('CATALOGOS')
+    .getRange(2, 1, catRows.length, 3).setValues(catRows);
+
+  ss.getSheetByName('USUARIOS').appendRow([
+    1, ADMIN_USERNAME, _hash(ADMIN_PASSWORD),
+    ADMIN_NAME, 'admin', true, new Date()
+  ]);
+
+  // Verificación final: leer nombres de hojas
+  const nombres = ss.getSheets().map(s => s.getName());
+  Logger.log('Hojas después de inicializar (' + nombres.length + '): ' + JSON.stringify(nombres));
+
+  SpreadsheetApp.getUi().alert(
+    '✓ Inicialización completa',
+    'Hojas: ' + nombres.length + ' → ' + nombres.join(', ') +
+    '\nMunicipios: ' + MUNICIPIOS.length +
+    '\nCatálogos: ' + catRows.length + ' valores' +
+    '\nUsuario: ' + ADMIN_USERNAME +
+    '\n\nSIGUIENTE: crear hoja "_LOCALIDADES_SEED" y ejecutar importarLocalidades()',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}
+
+// ===== IMPORTAR LOCALIDADES =====
+function importarLocalidades() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const tmp = ss.getSheetByName('_LOCALIDADES_SEED');
+  if (!tmp) throw new Error(
+    'No existe la hoja "_LOCALIDADES_SEED".\n' +
+    'Créala con 3 columnas (A: NOM_MUN, B: LOC, C: NOM_LOC) y pega los datos.'
+  );
+
+  const munMap = {};
+  MUNICIPIOS.forEach(m => munMap[String(m[1]).trim()] = m[0]);
+
+  const data = tmp.getDataRange().getValues();
+  if (data.length < 2) throw new Error('La hoja temporal está vacía.');
+  const header = data[0].map(h => String(h).trim().toUpperCase());
+  if (header[0] !== 'NOM_MUN' || header[1] !== 'LOC' || header[2] !== 'NOM_LOC') {
+    throw new Error('Headers incorrectos. Deben ser: NOM_MUN | LOC | NOM_LOC');
+  }
+
+  const rows = [];
+  let skipped = 0;
+  for (let i = 1; i < data.length; i++) {
+    const [nomMun, loc, nomLoc] = data[i];
+    if (!nomMun || !loc || !nomLoc) { skipped++; continue; }
+    const munId = munMap[String(nomMun).trim()];
+    if (!munId) { skipped++; continue; }
+    const clave = String(loc).padStart(4, '0');
+    rows.push([rows.length + 1, munId, clave, String(nomLoc).trim()]);
+  }
+
+  if (rows.length === 0) throw new Error(
+    'No se insertaron filas. Verifica que los nombres de municipio coincidan con MUNICIPIOS.'
+  );
+
+  ss.getSheetByName('LOCALIDADES')
+    .getRange(2, 1, rows.length, 4).setValues(rows);
+
+  SpreadsheetApp.getUi().alert(
+    '✓ Localidades importadas',
+    'Insertadas: ' + rows.length + '\nOmitidas: ' + skipped +
+    '\n\nYa puedes borrar la hoja "_LOCALIDADES_SEED".',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}
+
+// =========================================================
+// MIGRACIÓN (2026-08-31): columna "problemas_identificados" en REGISTROS
+// Agrega el header al final de la fila 1 si falta. Idempotente:
+// si ya existe, no hace nada. NUNCA borra ni renombra columnas.
+// Requerida por el campo obligatorio del formulario de captura
+// y por la bandeja "Capturas de campo" de la Torre ATLAS.
+// EJECUTAR UNA VEZ desde el editor.
+// =========================================================
+function migrarProblemas() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName('REGISTROS');
+  if (!sh) throw new Error('No existe la hoja REGISTROS');
+  const headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0]
+    .map(h => String(h).trim());
+  if (headers.indexOf('problemas_identificados') !== -1) {
+    SpreadsheetApp.getUi().alert(
+      'Nada que migrar',
+      'La columna "problemas_identificados" ya existe en REGISTROS.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+    return;
+  }
+  sh.getRange(1, sh.getLastColumn() + 1)
+    .setValue('problemas_identificados')
+    .setFontWeight('bold').setBackground('#E8EAED');
+  Logger.log('Columna problemas_identificados AGREGADA en REGISTROS (columna ' + (sh.getLastColumn()) + ').');
+  SpreadsheetApp.getUi().alert(
+    '✓ Migración lista',
+    'Columna "problemas_identificados" agregada a REGISTROS.\n' +
+    'Los registros viejos quedan vacíos en esa columna (normal).',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}

@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6B1F2E">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/img/icon-192.svg">
+  <link rel="apple-touch-icon" href="assets/img/icon-192.svg">
+  <title>RBD — Tatiana Ángeles</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Cintillo lateral con frases de estrategia política -->
+  <aside class="sidebar" aria-hidden="true">
+    <div class="sidebar-bg"></div>
+    <div class="sidebar-inner">
+      <div class="sidebar-brand">
+        <div class="sidebar-monogram">TA</div>
+        <div class="sidebar-name">Tatiana Ángeles</div>
+        <div class="sidebar-tagline">Vamos Contigo</div>
+      </div>
+      <div class="sidebar-phrases">
+        <div class="sidebar-phrase active" data-i="0"></div>
+        <div class="sidebar-phrase" data-i="1"></div>
+        <div class="sidebar-phrase" data-i="2"></div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-dots">
+          <span class="sidebar-dot active" data-i="0"></span>
+          <span class="sidebar-dot" data-i="1"></span>
+          <span class="sidebar-dot" data-i="2"></span>
+        </div>
+        <div class="sidebar-copyright">Vinculación Territorial · 2026</div>
+      </div>
+    </div>
+  </aside>
+
+  <header class="app-header">
+    <div class="hdr-left">
+      <div class="hdr-logo">TA</div>
+      <div>
+        <div class="hdr-title" id="hdr-titulo">Vinculación Territorial</div>
+        <div class="hdr-user">
+          <span class="hdr-dot"></span>
+          <span id="hdr-usuario"></span>
+        </div>
+      </div>
+    </div>
+    <button class="hdr-logout" id="btn-logout" title="Cerrar sesión">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+      <span>Salir</span>
+    </button>
+  </header>
+
+  <main class="app-main">
+
+    <!-- HOME / CONSULTA -->
+    <section id="sec-home" class="section active">
+      <div class="hero-home">
+        <div class="hero-eyebrow">VINCULACIÓN TERRITORIAL</div>
+        <div class="hero-tagline">La información que nos acerca a las personas.</div>
+        <p class="hero-sub">Consulta, registra y da seguimiento a las relaciones construidas en el territorio.</p>
+        <div class="hero-divider" aria-hidden="true"></div>
+      </div>
+
+      <nav class="quick-actions" aria-label="Acciones rápidas">
+        <button type="button" class="qa-btn active" data-go="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>
+          <span>Inicio</span>
+        </button>
+        <button type="button" class="qa-btn" data-go="nuevo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <span>Nuevo</span>
+        </button>
+        <button type="button" class="qa-btn" data-go="buscar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span>Buscar</span>
+        </button>
+        <button type="button" class="qa-btn" id="qa-ficha" data-go="ficha" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <span>Ficha</span>
+        </button>
+      </nav>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M21 21l-4.3-4.3"/>
+        </svg>
+        <input type="search" id="q" placeholder="Buscar por nombre, organización, observaciones...">
+      </div>
+      <details class="filters">
+        <summary>
+          <span>Filtros</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </summary>
+        <div class="form-grid" style="margin-top:12px;">
+          <select id="f-municipio"><option value="">Todos los municipios</option></select>
+          <select id="f-localidad" disabled><option value="">Todas las localidades</option></select>
+          <select id="f-perfil"><option value="">Cualquier perfil</option></select>
+          <select id="f-prioridad"><option value="">Cualquier prioridad</option></select>
+          <select id="f-estatus"><option value="">Cualquier estatus</option></select>
+          <button type="button" class="ghost" id="btn-limpiar-f" style="min-height:38px;font-size:13px;">Limpiar filtros</button>
+        </div>
+      </details>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button id="btn-buscar" class="btn-primary-lg" style="margin-top:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M21 21l-4.3-4.3"/>
+          </svg>
+          <span>Buscar</span>
+        </button>
+        <button type="button" class="ghost" id="btn-imprimir-listado" style="display:none;min-height:52px;font-size:14px;">🖨 Imprimir</button>
+      </div>
+      <div id="resultados" style="margin-top:16px;"></div>
+      <div id="print-header-listado" class="print-header" style="display:none;">
+        <h2>Mapa de Vinculación Territorial</h2>
+        <div class="sub" id="print-meta-listado"></div>
+      </div>
+    </section>
+
+    <!-- NUEVO -->
+    <section id="sec-nuevo" class="section">
+      <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="32" height="32">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+        <div>
+          <div class="section-title">Nuevo registro</div>
+          <div class="section-subtitle">Captura una persona, organización o actor territorial</div>
+        </div>
+      </div>
+      <form id="frm-nuevo" class="form-grid">
+        <label>Municipio *
+          <select id="n-municipio" required></select>
+        </label>
+        <label>Localidad
+          <select id="n-localidad"><option value="">(sin localidad)</option></select>
+          <small id="loc-help" style="display:block;margin-top:4px;font-size:12px;color:var(--muted);">
+            Selecciona un municipio para cargar sus localidades.
+          </small>
+        </label>
+        <label>Nombre *
+          <input type="text" id="n-nombre" required>
+        </label>
+        <label>Organización / sector
+          <select id="n-organizacion">
+            <option value="">— Selecciona —</option>
+            <option value="Jóvenes">Jóvenes</option>
+            <option value="Mujeres">Mujeres</option>
+            <option value="Políticos">Políticos</option>
+            <option value="Empresarial">Empresarial</option>
+            <option value="Educativo">Educativo</option>
+            <option value="Comunitario">Comunitario</option>
+            <option value="Religioso">Religioso</option>
+            <option value="Deportivo">Deportivo</option>
+            <option value="Productivo">Productivo</option>
+            <option value="Cultural">Cultural</option>
+            <option value="__otro__">Otro (especificar)</option>
+          </select>
+          <input type="text" id="n-organizacion-otro" placeholder="Especifica..." style="display:none;margin-top:6px;">
+        </label>
+        <label>Perfil
+          <select id="n-perfil"></select>
+          <input type="text" id="n-perfil-otro" placeholder="Especifica el perfil..." style="display:none;margin-top:6px;">
+        </label>
+        <label>Tipo de vinculación
+          <select id="n-tipo"></select>
+          <input type="text" id="n-tipo-otro" placeholder="Especifica el tipo..." style="display:none;margin-top:6px;">
+        </label>
+        <label>Qué puede aportar
+          <textarea id="n-aporta" rows="2"></textarea>
+        </label>
+        <label>Problemas públicos más identificados aquí *
+          <textarea id="n-problemas" rows="3" required
+            placeholder="Ej. Falta de agua entubada, camino en mal estado, inseguridad… (obligatorio)"></textarea>
+        </label>
+        <label>Prioridad
+          <select id="n-prioridad"></select>
+        </label>
+        <label>Motivo de prioridad
+          <textarea id="n-motivo" rows="2"></textarea>
+        </label>
+        <label>Próximo paso
+          <textarea id="n-proximo" rows="2"></textarea>
+        </label>
+        <label>Fecha de seguimiento
+          <input type="date" id="n-fecha">
+        </label>
+        <label>Estatus
+          <select id="n-estatus"></select>
+        </label>
+        <label>Observaciones
+          <textarea id="n-obs" rows="2"></textarea>
+        </label>
+        <button type="submit" class="btn-primary-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Guardar registro</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- FICHA -->
+    <section id="sec-ficha" class="section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <button class="ghost" id="btn-volver">← Volver</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+          <button class="ghost" id="btn-imprimir-ficha" style="display:none;">🖨 Imprimir</button>
+          <button class="ghost" id="btn-reactivar" style="display:none;">↻ Reactivar</button>
+          <button class="ghost" id="btn-inactivar" style="display:none;">⏸ Inactivar</button>
+          <button id="btn-editar" class="ghost" style="display:none;">✎ Editar</button>
+        </div>
+      </div>
+
+      <!-- Botón flotante de Guardar — solo visible durante edición de ficha -->
+      <button id="fab-save" class="fab-save" type="button" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>Guardar cambios</span>
+      </button>
+      <div class="print-header" style="display:none;">
+        <h2>Mapa de Vinculación Territorial — Ficha</h2>
+        <div class="sub" id="print-meta-ficha"></div>
+      </div>
+      <div id="ficha-contenido"></div>
+    </section>
+
+    <!-- BUSCAR (placeholder para sec-buscar si la separamos) -->
+    <section id="sec-buscar" class="section">
+      <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="32" height="32">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M21 21l-4.3-4.3"/>
+        </svg>
+        <div>
+          <div class="section-title">Búsqueda</div>
+          <div class="section-subtitle">Usa la pestaña "Inicio" para buscar registros</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button data-go="home" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Inicio</span>
+    </button>
+    <button data-go="nuevo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      <span>Nuevo</span>
+    </button>
+    <button data-go="buscar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span>Buscar</span>
+    </button>
+    <button data-go="ficha" id="nav-ficha" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span>Ficha</span>
+    </button>
+  </nav>
+
+  <script src="js/config.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const App = {
+      catalogo: null,
+      currentId: null,
+      LIMIT: 20,
+      offset: 0,
+      filtrosActuales: {},
+      hayFiltros: false,
+
+      async init() {
+        const ses = Auth.require();
+        if (!ses) {
+          document.querySelector('main').innerHTML =
+            '<div class="empty">No hay sesión. <a href="index.html">Inicia sesión</a></div>';
+          return;
+        }
+        document.getElementById('hdr-usuario').textContent = ses.usuario;
+        // Guardar rol para usar en permisos UI
+        this.rol = ses.rol || 'operador';
+        this.nombreUsuario = ses.nombre || ses.usuario;
+        this.esAdmin = this.rol === 'admin';
+
+        // FIX PREVENTIVO: si la sesión no trae rol (cache vieja),
+        // pedirlo al backend y actualizar localStorage en paralelo.
+        // Si falla, silencioso: la app sigue funcionando como operador.
+        if (!ses.rol && ses.token) {
+          this._autoRellenarRol(ses).catch(() => {});
+        }
+
+        document.getElementById('btn-logout').onclick = () => {
+          try { Auth.logout(); } catch (e) { console.error('logout error:', e); }
+          window.location.href = 'index.html';
+        };
+
+        // Nav inferior (se oculta en >=1024px, pero el wire sigue activo)
+        document.querySelectorAll('.bottom-nav button').forEach(b => {
+          b.onclick = () => App.go(b.dataset.go);
+        });
+        // Acciones rápidas (franja superior del home)
+        document.querySelectorAll('.quick-actions .qa-btn').forEach(b => {
+          b.onclick = () => {
+            if (b.disabled) return;
+            App.go(b.dataset.go);
+          };
+        });
+        document.getElementById('btn-volver').onclick = () => App.go('home');
+        document.getElementById('btn-editar').onclick = () => App.modoEdicion();
+        document.getElementById('btn-imprimir-ficha').onclick = () => App.imprimir('ficha');
+        document.getElementById('btn-imprimir-listado').onclick = () => App.imprimir('listado');
+        document.getElementById('btn-inactivar').onclick = () => App.confirmarInactivar();
+        document.getElementById('btn-reactivar').onclick = () => App.reactivar();
+        // Botón flotante de Guardar (edición de ficha)
+        document.getElementById('fab-save').onclick = () => App.guardarEdicion(App.currentId);
+
+        // Eventos
+        document.getElementById('btn-buscar').onclick = () => App.buscar();
+        document.getElementById('f-municipio').onchange = () => { App.cargarLocalidadesFiltro(); App.buscar(); };
+        ['f-localidad','f-perfil','f-prioridad','f-estatus'].forEach(id => {
+          document.getElementById(id).onchange = () => App.buscar();
+        });
+        document.getElementById('btn-limpiar-f').onclick = () => {
+          ['f-municipio','f-localidad','f-perfil','f-prioridad','f-estatus'].forEach(id => {
+            document.getElementById(id).value = '';
+          });
+          App.cargarLocalidadesFiltro();
+          App.buscar();
+        };
+        document.getElementById('q').onkeydown = (e) => { if (e.key === 'Enter') App.buscar(); };
+        // Event delegation: captura el change en cualquier momento
+        document.addEventListener('change', (e) => {
+          if (e.target && e.target.id === 'n-municipio') App.filtrarLocalidades();
+          const otrosMap = {
+            'n-organizacion': 'n-organizacion-otro',
+            'n-perfil':       'n-perfil-otro',
+            'n-tipo':         'n-tipo-otro'
+          };
+          if (e.target && otrosMap[e.target.id]) {
+            const otro = document.getElementById(otrosMap[e.target.id]);
+            otro.style.display = e.target.value === '__otro__' ? 'block' : 'none';
+          }
+        });
+        document.getElementById('frm-nuevo').onsubmit = (e) => App.guardarNuevo(e);
+
+        await this.cargarCatalogo();
+        await this.buscar();
+        this.iniciarCintillo();
+      },
+
+      // Cintillo lateral con frases que rotan cada 6s
+      FRASES: [
+        'Escuchar también es una forma de gobernar.',
+        'Las mejores decisiones comienzan con información.',
+        'Conocer el territorio es conocer a su gente.',
+        'Cada comunidad tiene una historia que contar.',
+        'La cercanía transforma la información en acción.',
+        'El liderazgo se construye escuchando.',
+        'Una visión clara necesita información clara.',
+        'Los grandes proyectos comienzan con pequeños encuentros.',
+        'Conocer. Escuchar. Comprender. Actuar.',
+        'El territorio habla. Hay que saber escucharlo.',
+        'Cada persona representa una historia, una necesidad y una oportunidad.',
+        'La información permite ver más allá de lo evidente.',
+        'Una comunidad informada puede construir mejores decisiones.',
+        'La confianza se construye con presencia y constancia.',
+        'La experiencia se fortalece cuando se convierte en conocimiento.',
+        'Los datos muestran dónde estamos; la visión indica hacia dónde avanzar.',
+        'El futuro se construye desde el territorio.',
+        'La cercanía no se improvisa: se construye.',
+        'Escuchar hoy permite comprender mejor el mañana.',
+        'Cada territorio tiene sus propios desafíos.',
+        'Cada comunidad merece ser comprendida.',
+        'La información conecta personas, territorio y decisiones.',
+        'Conocer la realidad es el primer paso para transformarla.',
+        'La visión empieza donde comienza la realidad.',
+        'Un liderazgo cercano comienza por escuchar.'
+      ],
+
+      iniciarCintillo() {
+        const frasesEl = document.querySelectorAll('.sidebar-phrase');
+        const dotsEl   = document.querySelectorAll('.sidebar-dot');
+        if (!frasesEl.length) return;
+        let idx = 0;
+        const N = this.FRASES.length;
+        const SLOT_COUNT = frasesEl.length; // 3 frases mostradas a la vez
+        const pintar = () => {
+          for (let s = 0; s < SLOT_COUNT; s++) {
+            const i = (idx + s) % N;
+            const frase = this.FRASES[i];
+            frasesEl[s].textContent = frase;
+            frasesEl[s].classList.toggle('active', s === 0);
+            if (dotsEl[s]) dotsEl[s].classList.toggle('active', s === 0);
+          }
+        };
+        pintar();
+        setInterval(() => {
+          idx = (idx + 1) % N;
+          pintar();
+        }, 6000);
+      },
+
+      go(seccion) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById('sec-' + seccion).classList.add('active');
+        document.querySelectorAll('.bottom-nav button').forEach(b => {
+          b.classList.toggle('active', b.dataset.go === seccion);
+        });
+        document.querySelectorAll('.quick-actions .qa-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.go === seccion);
+        });
+        const titulos = { home: 'Vinculación Territorial', nuevo: 'Nuevo registro', ficha: 'Ficha', buscar: 'Buscar' };
+        document.getElementById('hdr-titulo').textContent = titulos[seccion] || 'Vinculación Territorial';
+      },
+
+      async cargarCatalogo() {
+        try {
+          this.catalogo = await API.catalogos();
+
+          // Filtro municipio (home)
+          const fMun = document.getElementById('f-municipio');
+          this.catalogo.municipios
+            .sort((a,b) => a.nombre.localeCompare(b.nombre))
+            .forEach(m => {
+              const o = document.createElement('option');
+              o.value = m.nombre; o.textContent = m.nombre;
+              fMun.appendChild(o);
+            });
+
+          // Filtros prioridad/estatus/perfil (home)
+          const llenarFiltro = (sel, items) => {
+            items.forEach(v => {
+              const o = document.createElement('option');
+              o.value = v; o.textContent = v;
+              sel.appendChild(o);
+            });
+          };
+          llenarFiltro(document.getElementById('f-prioridad'), this.catalogo.catalogos.prioridad || []);
+          llenarFiltro(document.getElementById('f-estatus'),   this.catalogo.catalogos.estatus || []);
+          llenarFiltro(document.getElementById('f-perfil'),    this.catalogo.catalogos.perfil || []);
+
+          // Form nuevo
+          const llenar = (sel, items) => {
+            const def = sel.querySelector('option') ? sel.querySelector('option').outerHTML : '';
+            sel.innerHTML = def;
+            items.forEach(v => {
+              const o = document.createElement('option');
+              o.value = v;
+              o.textContent = (v === '__otro__') ? 'Otro (especificar)' : v;
+              sel.appendChild(o);
+            });
+          };
+          const muns = this.catalogo.municipios.map(m => m.nombre).sort();
+          llenar(document.getElementById('n-municipio'), muns);
+          llenar(document.getElementById('n-perfil'),    [...(this.catalogo.catalogos.perfil || []), '__otro__']);
+          llenar(document.getElementById('n-tipo'),      [...(this.catalogo.catalogos.tipo_vinculacion || []), '__otro__']);
+          llenar(document.getElementById('n-prioridad'), this.catalogo.catalogos.prioridad || []);
+          llenar(document.getElementById('n-estatus'),   this.catalogo.catalogos.estatus || []);
+        } catch (e) {
+          UI.toast('Error cargando catálogos: ' + e.message, 'error');
+        }
+      },
+
+      filtrarLocalidades() {
+        const munNombre = document.getElementById('n-municipio').value;
+        const sel = document.getElementById('n-localidad');
+        const help = document.getElementById('loc-help');
+        sel.innerHTML = '<option value="">(sin localidad)</option>';
+        if (!munNombre || !this.catalogo) {
+          if (help) help.textContent = 'Selecciona un municipio para cargar sus localidades.';
+          return;
+        }
+        const mun = this.catalogo.municipios.find(m => m.nombre === munNombre);
+        if (!mun) {
+          if (help) help.textContent = 'Municipio no encontrado.';
+          return;
+        }
+        const munId = mun.id;
+        const locsMun = this.catalogo.localidades
+          .filter(l => l && l.nombre && (String(l.municipio_id) === String(munId)
+                    || String(l.id_municipio) === String(munId)))
+          .sort((a,b) => String(a.nombre).localeCompare(String(b.nombre)));
+        locsMun.forEach(l => {
+          const o = document.createElement('option');
+          o.value = String(l.nombre); o.textContent = String(l.nombre);
+          sel.appendChild(o);
+        });
+        if (help) {
+          help.textContent = locsMun.length
+            ? (locsMun.length + ' localidades disponibles. Toca el campo para elegir.')
+            : 'Este municipio no tiene localidades cargadas.';
+        }
+      },
+
+      cargarLocalidadesFiltro() {
+        const munNombre = document.getElementById('f-municipio').value;
+        const sel = document.getElementById('f-localidad');
+        sel.innerHTML = '<option value="">Todas las localidades</option>';
+        if (!munNombre || !this.catalogo) {
+          sel.disabled = true;
+          return;
+        }
+        const mun = this.catalogo.municipios.find(m => m.nombre === munNombre);
+        if (!mun) { sel.disabled = true; return; }
+        const munId = mun.id;
+        const locsMun = this.catalogo.localidades
+          .filter(l => l && l.nombre && (String(l.municipio_id) === String(munId)
+                    || String(l.id_municipio) === String(munId)))
+          .sort((a,b) => String(a.nombre).localeCompare(String(b.nombre)));
+        locsMun.forEach(l => {
+          const o = document.createElement('option');
+          o.value = String(l.nombre); o.textContent = String(l.nombre);
+          sel.appendChild(o);
+        });
+        sel.disabled = locsMun.length === 0;
+      },
+
+      async buscar() {
+        // Resetear resultados y offset
+        this.offset = 0;
+        this.filtrosActuales = {
+          q: document.getElementById('q').value,
+          municipio: document.getElementById('f-municipio').value,
+          localidad: document.getElementById('f-localidad').value,
+          perfil:    document.getElementById('f-perfil').value,
+          prioridad: document.getElementById('f-prioridad').value,
+          estatus:   document.getElementById('f-estatus').value
+        };
+        this.hayFiltros = Object.values(this.filtrosActuales).some(v => v && v.trim());
+        const cont = document.getElementById('resultados');
+        cont.innerHTML = '<div class="empty">Buscando...</div>';
+        try {
+          const data = await this._pagina();
+          this._renderResultados(data, true);
+        } catch (e) {
+          cont.innerHTML = '<div class="empty">Error: ' + e.message + '</div>';
+        }
+      },
+
+      async _pagina() {
+        return API.buscar(Object.assign({}, this.filtrosActuales, {
+          limit: this.LIMIT || 20,
+          offset: this.offset
+        }));
+      },
+
+      _renderResultados(data, esReset) {
+        const cont = document.getElementById('resultados');
+        const btnImp = document.getElementById('btn-imprimir-listado');
+        if (!data.resultados.length) {
+          cont.innerHTML = UI.emptyState(this.hayFiltros
+            ? 'Sin resultados con esos filtros.'
+            : 'Aún no hay registros. Toca "Nuevo" para crear el primero.');
+          if (btnImp) btnImp.style.display = 'none';
+          return;
+        }
+
+        // Helper: iniciales a partir del nombre
+        const iniciales = (nombre) => {
+          const s = String(nombre || '').trim();
+          if (!s) return '?';
+          const partes = s.split(/\s+/).filter(Boolean);
+          if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+          return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+        };
+        // Clases según prioridad para el borde-izq
+        const prioClass = (p) => ({
+          'Alta':  'prio-borde-alta',
+          'Media': 'prio-borde-media',
+          'Baja':  'prio-borde-baja'
+        })[p] || 'prio-borde-baja';
+
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+
+        const htmlTarjetas = data.resultados.map(r => `
+          <article class="card card-v2 ${prioClass(r.prioridad)}" data-id="${r.id}">
+            <div class="card-head">
+              <div class="card-avatar" aria-hidden="true">${iniciales(r.nombre)}</div>
+              <div class="card-id">
+                <h3 class="card-name">${safe(r.nombre)}</h3>
+                <div class="card-geo">${safe(r.municipio)}${r.localidad?' · '+safe(r.localidad):''}</div>
+              </div>
+            </div>
+            ${(r.organizacion || r.perfil) ? `
+              <div class="card-tags">
+                ${r.organizacion ? `<span class="tag">${safe(r.organizacion)}</span>` : ''}
+                ${r.perfil ? `<span class="tag">${safe(r.perfil)}</span>` : ''}
+              </div>
+            ` : ''}
+            <div class="card-badges">
+              <span class="badge-dot ${UI.badgeParaPrioridad(r.prioridad)}">${safe(r.prioridad || '-')}</span>
+              <span class="badge-dot ${UI.badgeParaEstatus(r.estatus)}">${safe(r.estatus || '-')}</span>
+            </div>
+            ${r.proximo_paso ? `
+              <div class="card-next">
+                <span class="card-next-label">Próximo paso</span>
+                <span class="card-next-text">${safe(r.proximo_paso)}</span>
+              </div>
+            ` : ''}
+            ${r.que_aporta ? `
+              <div class="card-next card-aporta">
+                <span class="card-next-label">Qué puede aportar</span>
+                <span class="card-next-text">${safe(r.que_aporta)}</span>
+              </div>
+            ` : ''}
+            <div class="card-cta">VER FICHA →</div>
+          </article>
+        `).join('');
+
+        const meta = `<div class="results-meta">Mostrando ${Math.min(data.offset + data.resultados.length, data.total)} de ${data.total}${this.hayFiltros ? ' (filtrado)' : ''}</div>`;
+        const cards = `<div class="cards">${htmlTarjetas}</div>`;
+
+        // Botón "ver más" si quedan resultados
+        const restantes = data.total - (data.offset + data.resultados.length);
+        const mas = restantes > 0
+          ? `<button type="button" class="ghost" id="btn-ver-mas" style="width:100%;margin-top:12px;min-height:44px;">Ver ${Math.min(restantes, this.LIMIT || 20)} más</button>`
+          : '';
+
+        if (esReset) {
+          cont.innerHTML = meta + cards + mas;
+        } else {
+          // Append: insertar antes del botón "ver más" o al final
+          const cardsBox = cont.querySelector('.cards');
+          if (cardsBox) {
+            cardsBox.insertAdjacentHTML('beforeend', htmlTarjetas);
+          }
+          cont.querySelector('.results-meta').innerHTML =
+            `Mostrando ${Math.min(data.offset + data.resultados.length, data.total)} de ${data.total}${this.hayFiltros ? ' (filtrado)' : ''}`;
+          // Reemplazar botón
+          const oldBtn = document.getElementById('btn-ver-mas');
+          if (oldBtn) oldBtn.remove();
+          if (mas) cont.insertAdjacentHTML('beforeend', mas);
+        }
+
+        // Wire tarjetas (incluye las nuevas en modo append)
+        cont.querySelectorAll('.card').forEach(c => {
+          if (!c.dataset.wired) {
+            c.dataset.wired = '1';
+            c.onclick = () => App.verFicha(parseInt(c.dataset.id, 10));
+          }
+        });
+        const masBtn = document.getElementById('btn-ver-mas');
+        if (masBtn) masBtn.onclick = () => App.cargarMas();
+
+        // Mostrar botón Imprimir solo si hay resultados
+        if (btnImp) btnImp.style.display = 'inline-flex';
+      },
+
+      async cargarMas() {
+        this.offset += this.LIMIT || 20;
+        const btn = document.getElementById('btn-ver-mas');
+        if (btn) { btn.disabled = true; btn.textContent = 'Cargando...'; }
+        try {
+          const data = await this._pagina();
+          this._renderResultados(data, false);
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+          if (btn) { btn.disabled = false; btn.textContent = 'Reintentar'; }
+        }
+      },
+
+      async verFicha(id) {
+        this.currentId = id;
+        // Re-leer sesión en cada ficha (evita cache desactualizada)
+        const ses = Auth.getSession();
+        const esAdmin = !!(ses && ses.rol === 'admin');
+        this.esAdmin = esAdmin;
+
+        document.getElementById('nav-ficha').disabled = false;
+        const qaFicha = document.getElementById('qa-ficha');
+        if (qaFicha) qaFicha.disabled = false;
+        document.getElementById('btn-editar').style.display = esAdmin ? 'inline-flex' : 'none';
+        document.getElementById('btn-editar').textContent = '✎ Editar';
+        document.getElementById('btn-imprimir-ficha').style.display = 'inline-flex';
+        // Inactivar/Reactivar se ajustan DESPUÉS de cargar el registro
+        // (dependen del estatus actual), dentro del try{} más abajo.
+        document.getElementById('btn-inactivar').style.display = 'none';
+        document.getElementById('btn-reactivar').style.display = 'none';
+        this.go('ficha');
+        const cont = document.getElementById('ficha-contenido');
+        cont.innerHTML = '<div class="empty">Cargando...</div>';
+        try {
+          const data = await API.obtener(id);
+          const r = data.registro;
+          // Botones según estatus actual
+          const esInactivo = (r.estatus === 'Inactivo');
+          document.getElementById('btn-inactivar').style.display = (esAdmin && !esInactivo) ? 'inline-flex' : 'none';
+          document.getElementById('btn-reactivar').style.display = (esAdmin &&  esInactivo) ? 'inline-flex' : 'none';
+
+          const estatusOpts = (this.catalogo && this.catalogo.catalogos && this.catalogo.catalogos.estatus)
+            || ['Por contactar','En seguimiento','Contactado','Compromiso adquirido','Cerrado','Inactivo'];
+          cont.innerHTML = `
+            <div class="ficha-section">
+              <h4 style="font-size:14px;color:var(--text);text-transform:none;font-weight:600;">${(r.nombre||'').replace(/[<>]/g,'')}</h4>
+              <p><b>${r.municipio||''}</b>${r.localidad?' · '+r.localidad:''}</p>
+              <div class="badges" style="margin-top:6px;">
+                ${UI.badge(r.prioridad||'-', UI.badgeParaPrioridad(r.prioridad)).outerHTML}
+                ${UI.badge(r.estatus||'-', UI.badgeParaEstatus(r.estatus)).outerHTML}
+              </div>
+            </div>
+            <div class="ficha-section">
+              <h4>Datos</h4>
+              ${r.organizacion?`<p><b>Organización:</b> ${r.organizacion}</p>`:''}
+              ${r.perfil?`<p><b>Perfil:</b> ${r.perfil}</p>`:''}
+              ${r.tipo_vinculacion?`<p><b>Tipo:</b> ${r.tipo_vinculacion}</p>`:''}
+              ${r.que_aporta?`<p><b>Aporta:</b> ${r.que_aporta}</p>`:''}
+              ${r.problemas_identificados?`<p><b>Problemas identificados:</b> ${r.problemas_identificados}</p>`:''}
+              ${r.motivo_prioridad?`<p><b>Motivo prioridad:</b> ${r.motivo_prioridad}</p>`:''}
+              ${r.proximo_paso?`<p><b>Próximo paso:</b> ${r.proximo_paso}</p>`:''}
+              ${r.fecha_seguimiento?`<p><b>Fecha seg.:</b> ${new Date(r.fecha_seguimiento).toLocaleDateString()}</p>`:''}
+              ${r.observaciones?`<p><b>Observaciones:</b> ${r.observaciones}</p>`:''}
+              <p style="color:var(--muted);font-size:12px;margin-top:8px;">
+                Creado por ${r.creado_por||'-'} el ${new Date(r.fecha_creacion).toLocaleString()}
+              </p>
+            </div>
+
+            <div class="ficha-section">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <h4 style="margin:0;">Seguimiento (${data.seguimientos.length})</h4>
+                <button type="button" class="ghost" id="btn-nuevo-seg" style="padding:6px 10px;min-height:36px;font-size:13px;">+ Agregar</button>
+              </div>
+              <div id="seg-form-wrap" style="display:none;margin-bottom:12px;padding:10px;background:#f8fbff;border:1px solid var(--border);border-radius:8px;">
+                <div class="form-grid" style="gap:8px;">
+                  <label style="margin:0;">Estatus
+                    <select id="seg-estatus">
+                      ${estatusOpts.map(v => `<option value="${v}" ${v===r.estatus?'selected':''}>${v}</option>`).join('')}
+                    </select>
+                  </label>
+                  <label style="margin:0;">Próximo paso
+                    <textarea id="seg-proximo" rows="2" placeholder="¿Qué sigue?">${(r.proximo_paso||'').replace(/[<>]/g,'')}</textarea>
+                  </label>
+                  <label style="margin:0;">Observaciones
+                    <textarea id="seg-obs" rows="2" placeholder="Notas, acuerdos, pendientes..."></textarea>
+                  </label>
+                  <div class="post-save" style="margin-top:4px;">
+                    <button type="button" id="seg-guardar" class="btn-primary-lg" style="min-height:40px;font-size:14px;">Guardar seguimiento</button>
+                    <button type="button" class="ghost" id="seg-cancelar" style="min-height:40px;font-size:14px;">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+              <div id="seg-lista">
+                ${data.seguimientos.length ? data.seguimientos.map(s => `
+                  <div class="crono-item">
+                    <div class="fecha">${new Date(s.fecha).toLocaleString()} · ${s.usuario||'-'}</div>
+                    ${s.estatus_anterior?`<div style="font-size:12px;color:var(--muted);">${s.estatus_anterior} →</div>`:''}
+                    <div><b>${s.estatus_nuevo||''}</b></div>
+                    ${s.proximo_paso?`<div style="margin-top:4px;"><b>Próximo:</b> ${s.proximo_paso}</div>`:''}
+                    ${s.observaciones?`<div><b>Obs:</b> ${s.observaciones}</div>`:''}
+                  </div>
+                `).join('') : '<p style="color:var(--muted);font-size:13px;">Sin seguimientos aún.</p>'}
+              </div>
+            </div>
+          `;
+
+          document.getElementById('btn-nuevo-seg').onclick = () => {
+            document.getElementById('seg-form-wrap').style.display = 'block';
+            document.getElementById('btn-nuevo-seg').style.display = 'none';
+            document.getElementById('seg-obs').focus();
+          };
+          document.getElementById('seg-cancelar').onclick = () => {
+            document.getElementById('seg-form-wrap').style.display = 'none';
+            document.getElementById('btn-nuevo-seg').style.display = 'inline-flex';
+          };
+          document.getElementById('seg-guardar').onclick = () => App.guardarSeguimiento(id);
+        } catch (e) {
+          cont.innerHTML = '<div class="empty">Error: ' + e.message + '</div>';
+        }
+      },
+
+      async guardarSeguimiento(id) {
+        const btn = document.getElementById('seg-guardar');
+        const estatus = document.getElementById('seg-estatus').value;
+        const proximo = document.getElementById('seg-proximo').value;
+        const obs     = document.getElementById('seg-obs').value;
+        if (!estatus && !proximo && !obs) {
+          UI.toast('Agrega al menos un dato para guardar el seguimiento.', 'error');
+          return;
+        }
+        UI.loading(btn, true);
+        try {
+          await API.seguimiento({
+            registro_id: id,
+            estatus_nuevo: estatus,
+            proximo_paso: proximo,
+            observaciones: obs
+          });
+          UI.toast('✓ Seguimiento guardado', 'success');
+          await this.verFicha(id);
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        } finally {
+          UI.loading(btn, false);
+        }
+      },
+
+      async modoEdicion() {
+        if (!this.currentId) return;
+        const btn = document.getElementById('btn-editar');
+        const fab = document.getElementById('fab-save');
+        if (btn.textContent === '✎ Editar') {
+          // Entrar a edición: recargar registro y mostrar form
+          try {
+            const data = await API.obtener(this.currentId);
+            const r = data.registro;
+            this.renderFormEdicion(r);
+            btn.textContent = '✕ Cancelar';
+            document.getElementById('btn-imprimir-ficha').style.display = 'none';
+            fab.style.display = 'inline-flex';
+            this._fabScrollToTop();
+          } catch (e) {
+            UI.toast('Error: ' + e.message, 'error');
+          }
+        } else {
+          // Cancelar: recargar ficha
+          fab.style.display = 'none';
+          await this.verFicha(this.currentId);
+        }
+      },
+
+      // Muestra el FAB de Guardar y hace scroll al inicio del form
+      _fabScrollToTop() {
+        const cont = document.getElementById('ficha-contenido');
+        if (cont) cont.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+
+      _hideFab() {
+        const fab = document.getElementById('fab-save');
+        if (fab) fab.style.display = 'none';
+      },
+
+      renderFormEdicion(r) {
+        const muns = this.catalogo.municipios.map(m => m.nombre).sort();
+        const perfilOpts = (this.catalogo.catalogos.perfil || []);
+        const tipoOpts   = (this.catalogo.catalogos.tipo_vinculacion || []);
+        const prioOpts   = (this.catalogo.catalogos.prioridad || []);
+        const estOpts    = (this.catalogo.catalogos.estatus || []);
+
+        const cont = document.getElementById('ficha-contenido');
+        cont.innerHTML = `
+          <form id="frm-editar" class="form-grid ficha-section" style="background:var(--bg-deco);border-color:var(--primary);">
+            <h4 style="color:var(--primary);">Editando registro #${r.id}</h4>
+            <label>Municipio *
+              <select id="e-municipio" required>
+                ${muns.map(v => `<option value="${v}" ${v===r.municipio?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </label>
+            <label>Localidad
+              <input type="text" id="e-localidad" value="${(r.localidad||'').replace(/[<>]/g,'')}">
+            </label>
+            <label>Nombre *
+              <input type="text" id="e-nombre" required value="${(r.nombre||'').replace(/[<>]/g,'')}">
+            </label>
+            <label>Organización
+              <input type="text" id="e-organizacion" value="${(r.organizacion||'').replace(/[<>]/g,'')}">
+            </label>
+            <label>Perfil
+              <select id="e-perfil">
+                <option value="">—</option>
+                ${perfilOpts.map(v => `<option value="${v}" ${v===r.perfil?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </label>
+            <label>Tipo de vinculación
+              <select id="e-tipo">
+                <option value="">—</option>
+                ${tipoOpts.map(v => `<option value="${v}" ${v===r.tipo_vinculacion?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </label>
+            <label>Qué puede aportar
+              <textarea id="e-aporta" rows="2">${(r.que_aporta||'').replace(/[<>]/g,'')}</textarea>
+            </label>
+            <label>Problemas públicos más identificados
+              <textarea id="e-problemas" rows="3">${(r.problemas_identificados||'').replace(/[<>]/g,'')}</textarea>
+            </label>
+            <label>Prioridad
+              <select id="e-prioridad">
+                <option value="">—</option>
+                ${prioOpts.map(v => `<option value="${v}" ${v===r.prioridad?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </label>
+            <label>Motivo de prioridad
+              <textarea id="e-motivo" rows="2">${(r.motivo_prioridad||'').replace(/[<>]/g,'')}</textarea>
+            </label>
+            <label>Próximo paso
+              <textarea id="e-proximo" rows="2">${(r.proximo_paso||'').replace(/[<>]/g,'')}</textarea>
+            </label>
+            <label>Fecha de seguimiento
+              <input type="date" id="e-fecha" value="${r.fecha_seguimiento ? new Date(r.fecha_seguimiento).toISOString().substring(0,10) : ''}">
+            </label>
+            <label>Estatus
+              <select id="e-estatus">
+                <option value="">—</option>
+                ${estOpts.map(v => `<option value="${v}" ${v===r.estatus?'selected':''}>${v}</option>`).join('')}
+              </select>
+            </label>
+            <label>Observaciones
+              <textarea id="e-obs" rows="2">${(r.observaciones||'').replace(/[<>]/g,'')}</textarea>
+            </label>
+            <div class="post-save e-guardar-inline">
+              <button type="submit" class="btn-primary-lg" id="e-guardar" style="min-height:44px;font-size:15px;">Guardar cambios</button>
+            </div>
+          </form>
+        `;
+        document.getElementById('frm-editar').onsubmit = (e) => {
+          e.preventDefault();
+          App.guardarEdicion(this.currentId);
+        };
+      },
+
+      async guardarEdicion(id) {
+        const btn = document.getElementById('e-guardar');
+        const fab  = document.getElementById('fab-save');
+        const datos = {
+          id: id,
+          municipio: document.getElementById('e-municipio').value,
+          localidad: document.getElementById('e-localidad').value,
+          nombre:    document.getElementById('e-nombre').value,
+          organizacion: document.getElementById('e-organizacion').value,
+          perfil:    document.getElementById('e-perfil').value,
+          tipo_vinculacion: document.getElementById('e-tipo').value,
+          que_aporta: document.getElementById('e-aporta').value,
+          prioridad: document.getElementById('e-prioridad').value,
+          motivo_prioridad: document.getElementById('e-motivo').value,
+          proximo_paso: document.getElementById('e-proximo').value,
+          fecha_seguimiento: document.getElementById('e-fecha').value,
+          estatus:   document.getElementById('e-estatus').value,
+          observaciones: document.getElementById('e-obs').value
+        };
+        // Problemas identificados: solo se envía si se capturó algo (no borra el dato existente)
+        const eProb = document.getElementById('e-problemas');
+        if (eProb && eProb.value.trim()) datos.problemas_identificados = eProb.value.trim();
+        if (!datos.municipio || !datos.nombre) {
+          UI.toast('Municipio y Nombre son requeridos.', 'error');
+          return;
+        }
+        // Loading sobre el FAB si el usuario clickeó el flotante,
+        // si no, sobre el botón inline.
+        const target = (fab && fab.style.display !== 'none') ? fab : btn;
+        UI.loading(target, true);
+        try {
+          await API.actualizar(datos);
+          UI.toast('✓ Registro actualizado', 'success');
+          this._hideFab();
+          await this.verFicha(id);
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        } finally {
+          UI.loading(target, false);
+        }
+      },
+
+      async imprimir(tipo) {
+        // tipo: 'listado' | 'ficha'
+        const ses = Auth.getSession();
+        const usuario = ses ? ses.usuario : '-';
+        const fecha = new Date().toLocaleString('es-MX');
+
+        if (tipo === 'listado') {
+          const filtrosActivos = Object.entries(this.filtrosActuales)
+            .filter(([k,v]) => v && v.trim())
+            .map(([k,v]) => `${k}=${v}`)
+            .join(', ') || 'sin filtros';
+          const meta = document.getElementById('print-meta-listado');
+          if (meta) meta.textContent =
+            `${this.offset + (document.querySelectorAll('.card').length)} registros · ${filtrosActivos} · Impreso por ${usuario} el ${fecha}`;
+        } else if (tipo === 'ficha' && this.currentId) {
+          try {
+            const data = await API.obtener(this.currentId);
+            const r = data.registro;
+            const meta = document.getElementById('print-meta-ficha');
+            if (meta) meta.textContent =
+              `Registro #${r.id} · ${r.municipio||''}${r.localidad?' · '+r.localidad:''} · Impreso por ${usuario} el ${fecha}`;
+          } catch (_) {}
+        }
+
+        // Marcar sección visible para impresión
+        const secId = (tipo === 'listado') ? 'sec-home' : 'sec-ficha';
+        const sec = document.getElementById(secId);
+        const oldActive = sec ? sec.classList.contains('active') : false;
+        if (sec) sec.classList.add('print-active');
+
+        // Mostrar print-header temporalmente
+        const ph = sec ? sec.querySelector('.print-header') : null;
+        const phWasHidden = ph && ph.style.display === 'none';
+        if (ph) ph.style.display = 'block';
+
+        // Imprimir
+        const restore = () => {
+          if (sec && !oldActive) sec.classList.remove('print-active');
+          if (sec) sec.classList.remove('print-active');
+          if (ph && phWasHidden) ph.style.display = 'none';
+          window.removeEventListener('afterprint', restore);
+        };
+        window.addEventListener('afterprint', restore);
+        window.print();
+        // Fallback por si afterprint no dispara (algunos navegadores)
+        setTimeout(restore, 1500);
+      },
+
+      // --------- FIX PREVENTIVO: auto-rellenar rol si falta ---------
+      async _autoRellenarRol(ses) {
+        try {
+          const data = await API.quienSoy();
+          if (!data) return;
+          const sesActualizada = Object.assign({}, ses, {
+            rol: data.rol,
+            nombre: data.nombre || ses.nombre || data.usuario
+          });
+          Auth.setSession(sesActualizada);
+          // Reflejar en el frontend sin recargar
+          this.rol = sesActualizada.rol;
+          this.nombreUsuario = sesActualizada.nombre;
+          this.esAdmin = this.rol === 'admin';
+          console.log('[auth] rol auto-rellenado:', this.rol);
+        } catch (e) {
+          // Silencioso: si falla, el usuario queda como operador.
+          // El próximo init() reintentará.
+          console.warn('[auth] no se pudo auto-rellenar rol:', e.message);
+        }
+      },
+
+      // --------- INACTIVAR / REACTIVAR ---------
+
+      async confirmarInactivar() {
+        if (!this.currentId) return;
+        // Leer nombre actual desde la ficha renderizada
+        const fichaHTML = document.getElementById('ficha-contenido');
+        const tituloEl = fichaHTML ? fichaHTML.querySelector('h4') : null;
+        const nombreActual = tituloEl ? tituloEl.textContent.trim() : '';
+        if (!nombreActual) {
+          UI.toast('No se pudo leer el nombre para confirmar.', 'error');
+          return;
+        }
+        const id = this.currentId;
+        const nombreSafe = nombreActual.replace(/[<>]/g, '');
+        const html = `
+          <div class="modal-backdrop" id="modal-inact">
+            <div class="modal-card" role="dialog" aria-modal="true">
+              <div class="modal-title">Inactivar registro</div>
+              <div class="modal-text">
+                Vas a marcar <b>${nombreSafe}</b> como Inactivo.
+                El registro seguirá visible (con badge gris), pero ya no contará
+                como disposición disponible.
+              </div>
+              <label style="font-size:13px;color:var(--muted);">
+                Para confirmar, escribe el nombre exacto:
+                <input type="text" class="modal-input" id="confirm-nombre"
+                       placeholder="${nombreSafe}" autocomplete="off">
+              </label>
+              <label class="modal-check">
+                <input type="checkbox" id="confirm-check">
+                <span>Entiendo que este cambio queda registrado para auditoría.</span>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="ghost" id="confirm-cancel">Cancelar</button>
+                <button type="button" class="modal-danger" id="confirm-ok" disabled>Inactivar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+
+        const backdrop = document.getElementById('modal-inact');
+        const inp = document.getElementById('confirm-nombre');
+        const chk = document.getElementById('confirm-check');
+        const ok  = document.getElementById('confirm-ok');
+        const cerrar = () => {
+          backdrop.remove();
+          document.removeEventListener('keydown', onEsc);
+        };
+        const onEsc = (e) => { if (e.key === 'Escape') cerrar(); };
+        document.addEventListener('keydown', onEsc);
+
+        const validar = () => {
+          const nombreOK = inp.value.trim().toLowerCase() === nombreActual.toLowerCase();
+          const habilitado = nombreOK && chk.checked;
+          ok.disabled = !habilitado;
+        };
+        inp.oninput = validar;
+        chk.onchange = validar;
+        inp.focus();
+
+        document.getElementById('confirm-cancel').onclick = cerrar;
+        backdrop.onclick = (e) => { if (e.target === backdrop) cerrar(); };
+
+        ok.onclick = async () => {
+          if (ok.disabled) return;
+          UI.loading(ok, true);
+          try {
+            await API.actualizar({ id: id, estatus: 'Inactivo' });
+            UI.toast('✓ Registro inactivado. Sigue visible en búsquedas.', 'success');
+            cerrar();
+            await this.verFicha(id);
+            this.buscar();
+          } catch (e) {
+            UI.toast('Error: ' + e.message, 'error');
+          } finally {
+            UI.loading(ok, false);
+          }
+        };
+      },
+
+      async reactivar() {
+        if (!this.currentId) return;
+        const id = this.currentId;
+        const btn = document.getElementById('btn-reactivar');
+        UI.loading(btn, true);
+        try {
+          await API.actualizar({ id: id, estatus: 'Por contactar' });
+          UI.toast('✓ Registro reactivado', 'success');
+          await this.verFicha(id);
+          this.buscar();
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        } finally {
+          UI.loading(btn, false);
+        }
+      },
+
+      async guardarNuevo(e) {
+        e.preventDefault();
+        // Guardia del campo obligatorio (doble vía: HTML required + aquí)
+        const campoProb = document.getElementById('n-problemas');
+        if (campoProb && !campoProb.value.trim()) {
+          UI.toast('Los "Problemas públicos más identificados" son obligatorios para guardar.', 'error');
+          campoProb.focus();
+          return;
+        }
+        const btn = e.target.querySelector('button[type=submit]');
+        UI.loading(btn, true);
+        UI.toast('Guardando...', 'persistent');
+        const datos = {
+          municipio: document.getElementById('n-municipio').value,
+          localidad: document.getElementById('n-localidad').value,
+          nombre:    document.getElementById('n-nombre').value,
+          organizacion:    (document.getElementById('n-organizacion').value === '__otro__'
+            ? document.getElementById('n-organizacion-otro').value
+            : document.getElementById('n-organizacion').value),
+          perfil:    (document.getElementById('n-perfil').value === '__otro__'
+            ? document.getElementById('n-perfil-otro').value
+            : document.getElementById('n-perfil').value),
+          tipo_vinculacion: (document.getElementById('n-tipo').value === '__otro__'
+            ? document.getElementById('n-tipo-otro').value
+            : document.getElementById('n-tipo').value),
+          que_aporta: document.getElementById('n-aporta').value,
+          problemas_identificados: campoProb.value.trim(),
+          prioridad: document.getElementById('n-prioridad').value,
+          motivo_prioridad: document.getElementById('n-motivo').value,
+          proximo_paso: document.getElementById('n-proximo').value,
+          fecha_seguimiento: document.getElementById('n-fecha').value,
+          estatus:   document.getElementById('n-estatus').value,
+          observaciones: document.getElementById('n-obs').value
+        };
+        try {
+          const out = await API.crear(datos);
+          // Quitar toast "Guardando..."
+          document.querySelectorAll('.toast').forEach(t => t.remove());
+          UI.toast('✓ Registro guardado (#' + out.id + ')', 'success');
+
+          // Mostrar opciones post-guardado
+          this.mostrarPostSave(out.id);
+          this.buscar();
+        } catch (e2) {
+          document.querySelectorAll('.toast').forEach(t => t.remove());
+          UI.toast('Error: ' + e2.message, 'error');
+        } finally {
+          UI.loading(btn, false);
+        }
+      },
+
+      mostrarPostSave(id) {
+        const form = document.getElementById('frm-nuevo');
+        // Quitar bloque previo si existe
+        const prev = document.getElementById('post-save-box');
+        if (prev) prev.remove();
+
+        const box = document.createElement('div');
+        box.id = 'post-save-box';
+        box.className = 'ficha-section';
+        box.style.background = '#F2E4E8';
+        box.style.borderColor = 'var(--primary)';
+        box.innerHTML = `
+          <p style="margin-bottom:8px;color:var(--primary);font-weight:600;">
+            ✓ Registro guardado correctamente
+          </p>
+          <div class="post-save">
+            <button type="button" id="ps-ver">Ver ficha</button>
+            <button type="button" class="ghost" id="ps-otro">Capturar otro</button>
+          </div>
+        `;
+        form.parentNode.insertBefore(box, form.nextSibling);
+
+        document.getElementById('ps-ver').onclick = () => this.verFicha(id);
+        document.getElementById('ps-otro').onclick = () => {
+          document.getElementById('frm-nuevo').reset();
+          box.remove();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          document.getElementById('n-municipio').focus();
+        };
+      }
+    };
+
+    App.init();
+
+    // PWA: registrar service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

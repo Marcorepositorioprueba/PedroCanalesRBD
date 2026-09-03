@@ -140,8 +140,9 @@ function importarLocalidades() {
     const munId = munMap[nombreMun];
     if (!munId) { skipped++; continue; }
     // LOC vacío = clave secuencial automática (0001, 0002, ...)
+    // ORDEN CORRECTO: id | municipio_id | nombre | clave
     const clave = String(loc).trim() || String(rows.length + 1).padStart(4, '0');
-    rows.push([rows.length + 1, munId, clave, String(nomLoc).trim()]);
+    rows.push([rows.length + 1, munId, String(nomLoc).trim(), clave]);
   }
 
   if (rows.length === 0) throw new Error(
@@ -189,6 +190,78 @@ function migrarProblemas() {
     '✓ Migración lista',
     'Columna "problemas_identificados" agregada a REGISTROS.\n' +
     'Los registros viejos quedan vacíos en esa columna (normal).',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}
+
+// =========================================================
+// FIX (2026-09-02): columnas nombre/clave intercambiadas en LOCALIDADES.
+// La primera importación escribió [id, municipio_id, CLAVE, NOMBRE] con
+// headers id|municipio_id|nombre|clave → el dropdown mostraba números.
+// Esta función intercambia columnas C y D (solo si C parece clave numérica,
+// para que sea seguro correrla dos veces). NO toca encabezados ni ids.
+// EJECUTAR UNA VEZ desde el editor.
+// =========================================================
+function repararLocalidades() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName('LOCALIDADES');
+  if (!sh) throw new Error('No existe la hoja LOCALIDADES');
+  const last = sh.getLastRow();
+  if (last < 2) { SpreadsheetApp.getUi().alert('LOCALIDADES está vacía.'); return; }
+
+  const cols = sh.getRange(2, 3, last - 1, 2).getValues(); // C y D
+  let yaBien = 0, cambiadas = 0;
+  for (let i = 0; i < cols.length; i++) {
+    const c = String(cols[i][0]).trim();
+    const d = String(cols[i][1]).trim();
+    // Si C ya es texto de nombre (no numérico de 1-4 dígitos), nada que hacer
+    if (!/^\d{1,4}$/.test(c)) { yaBien++; continue; }
+    cols[i] = [d, c];
+    cambiadas++;
+  }
+  if (cambiadas > 0) sh.getRange(2, 3, last - 1, 2).setValues(cols);
+  SpreadsheetApp.getUi().alert(
+    '✓ Localidades reparadas',
+    'Intercambiadas: ' + cambiadas + '\nYa correctas: ' + yaBien,
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
+}
+
+// =========================================================
+// ALTA DE USUARIO OPERADOR DE CAMPO (2026-09-02)
+// Crea el usuario "campo" con rol operador. Idempotente: si ya existe,
+// no duplica. Edita las 3 constantes de abajo si quieres otro nombre.
+// EJECUTAR UNA VEZ desde el editor.
+// =========================================================
+function agregarOperador() {
+  const NUEVO_USUARIO  = 'campo';
+  const NUEVO_PASSWORD = 'Campo2026';
+  const NUEVO_NOMBRE   = 'Operador de Campo';
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName('USUARIOS');
+  if (!sh) throw new Error('No existe la hoja USUARIOS');
+
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim().toLowerCase() === NUEVO_USUARIO.toLowerCase()) {
+      SpreadsheetApp.getUi().alert(
+        'Ya existe',
+        'El usuario "' + NUEVO_USUARIO + '" ya está dado de alta (fila ' + (i + 1) + ').',
+        SpreadsheetApp.getUi().ButtonSet.OK
+      );
+      return;
+    }
+  }
+
+  sh.appendRow([
+    sh.getLastRow(), NUEVO_USUARIO, _hash(NUEVO_PASSWORD),
+    NUEVO_NOMBRE, 'operador', true, new Date()
+  ]);
+  SpreadsheetApp.getUi().alert(
+    '✓ Operador creado',
+    'Usuario: ' + NUEVO_USUARIO + '\nContraseña: ' + NUEVO_PASSWORD +
+    '\n\nComunícala al equipo de campo y cámbiala después si hace falta.',
     SpreadsheetApp.getUi().ButtonSet.OK
   );
 }

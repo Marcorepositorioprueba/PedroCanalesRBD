@@ -86,8 +86,8 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at center, transparent 55%, rgba(20, 2, 40, 0.55) 100%);
+    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at center, transparent 62%, rgba(20, 2, 40, 0.38) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -100,17 +100,17 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   .login-body::before { animation: none; }
 }
 .login-card {
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(30, 10, 62, 0.35);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
   padding: 32px 28px 24px;
-  border-radius: 16px;
+  border-radius: 20px;
   width: min(380px, 92vw);
-  box-shadow: 0 20px 60px rgba(75, 11, 138, 0.25),
-              0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 20px 60px rgba(75, 11, 138, 0.35),
+              0 4px 12px rgba(0,0,0,0.10);
   position: relative;
   z-index: 1;
-  border: 1px solid rgba(229, 220, 239, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   margin: auto;
   overflow: hidden;
   animation: card-aura 7s ease-in-out infinite;
@@ -120,7 +120,7 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   content: "";
   position: absolute;
   inset: -20% -60%;
-  background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.45) 50%, transparent 62%);
+  background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,0.28) 50%, transparent 62%);
   transform: translateX(-120%);
   animation: card-brillo 7s ease-in-out infinite;
   pointer-events: none;
@@ -159,16 +159,17 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   font-family: "Georgia", "Playfair Display", serif;
   font-size: 56px;
   font-weight: 700;
-  color: var(--primary);
+  color: #ffffff;
   line-height: 1;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
+  text-shadow: 0 2px 14px rgba(255, 255, 255, 0.35);
 }
 .login-brand .name {
   font-family: "Georgia", "Playfair Display", serif;
   font-size: 14px;
   font-weight: 600;
-  color: var(--primary);
+  color: #ffffff;
   letter-spacing: 0.32em;
   text-transform: uppercase;
   margin-bottom: 6px;
@@ -179,7 +180,7 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   font-family: "Georgia", serif;
   font-size: 12px;
   letter-spacing: 0.25em;
-  color: var(--primary-light);
+  color: rgba(255, 255, 255, 0.85);
   text-transform: uppercase;
 }
 .login-brand .tagline::before,
@@ -187,15 +188,37 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   content: "";
   flex: 0 0 30px;
   height: 1px;
-  background: var(--primary-light);
+  background: rgba(255, 255, 255, 0.85);
   opacity: 0.5;
 }
 .login-card h1 { display: none; } /* oculto, branding está en .login-brand */
 .login-card .sub {
   display: none; /* oculto, branding está en .login-brand */
 }
-.login-card button { width: 100%; }
-.error { color: var(--danger); margin-top: 12px; font-size: 14px; }
+.login-card label { color: rgba(255, 255, 255, 0.85); }
+.login-card input {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+.login-card input::placeholder { color: rgba(255, 255, 255, 0.5); }
+.login-card input:focus {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.login-card input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff;
+  -webkit-box-shadow: 0 0 0 1000px rgba(30, 10, 62, 0.6) inset;
+}
+.login-card button {
+  width: 100%;
+  background: #ffffff;
+  color: var(--primary);
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+.login-card button:hover { background: rgba(255, 255, 255, 0.88); }
+.error { color: #ffb0c4; margin-top: 12px; font-size: 14px; }
 
 /* 3 pilares decorativos */
 .login-pillars {
@@ -204,19 +227,19 @@ label input, label select, label textarea { margin-top: 4px; color: var(--text);
   gap: 8px;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
 }
 .login-pillars .pillar {
   text-align: center;
   font-size: 10px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 600;
 }
 .login-pillars .pillar svg {
   display: block; margin: 0 auto 4px;
-  color: var(--primary);
+  color: #ffffff;
 }
 
 /* APP SHELL */

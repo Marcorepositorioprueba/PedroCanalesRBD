@@ -471,6 +471,12 @@
           llenar(document.getElementById('n-tipo'),      [...(this.catalogo.catalogos.tipo_vinculacion || []), '__otro__']);
           llenar(document.getElementById('n-prioridad'), this.catalogo.catalogos.prioridad || []);
           llenar(document.getElementById('n-estatus'),   this.catalogo.catalogos.estatus || []);
+
+          // Con un solo municipio el select ya viene seleccionado de entrada,
+          // así que NO se dispara 'change' al elegirlo: se cargan las
+          // localidades de inmediato para ese valor preseleccionado.
+          this.cargarLocalidadesFiltro();
+          this.filtrarLocalidades();
         } catch (e) {
           UI.toast('Error cargando catálogos: ' + e.message, 'error');
         }

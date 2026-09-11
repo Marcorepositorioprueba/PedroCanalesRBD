@@ -883,7 +883,8 @@ function doPost(e) {
     delete payload.action;
     delete payload.token;
 
-    if (action !== 'login') {
+    // ping y catalogos son públicos también por POST (la app los llama sin token)
+    if (action !== 'login' && action !== 'catalogos' && action !== 'ping') {
       const ses = _validarToken(token);
       if (!ses) return _err('Sesión inválida o expirada', 'AUTH');
       const data = _routing(action, payload, ses, token);

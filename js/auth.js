@@ -19,18 +19,12 @@ const Auth = {
     return data;
   },
 
-  logout() {
+  async logout() {
     const s = this.getSession();
-    if (s && s.token) {
-      // No bloqueante: el token en backend expira solo
-      const url = (typeof API_URL !== 'undefined' ? API_URL : '') +
-                  '?action=logout&token=' + encodeURIComponent(s.token);
-      if (url) {
-        fetch(url).catch(() => {}).finally(() => this.clear());
-        return;
-      }
+    this.clear(); // limpiar local primero: la UI no debe esperar al backend
+    if (s && s.token && typeof API !== 'undefined' && API.logout) {
+      try { await API.logout(); } catch (_) { /* no bloqueante */ }
     }
-    this.clear();
   },
 
   require() {

@@ -401,3 +401,40 @@ Si hay SyntaxError mañana:
 =========================================================
 FIN DEL ROADMAP
 =========================================================
+
+
+=========================================================
+V2 — 2026-09-10 · MIGRACIÓN + REPORTE DE OBSERVACIONES V1
+=========================================================
+PedroCanalesRBD/ es ahora la carpeta ÚNICA y buena (el demo V1 queda retirado).
+Sheet nuevo (cuenta limpia): 12VhHRb9yZjWGz4y_1tv5-t02Kb35quQi2lvRVvAWOG8
+
+Implementado (código listo, falta deploy del usuario):
+[✓] Backend v2 reescrito (codigo.gs): roles reales en servidor (_exigir/_exigirAdmin),
+    sesiones con rol/nombre/lider_id (TTL 24h admin / 7d líder), logout real,
+    hoja SIMPATIZANTES (ficha simple con consentimiento), hoja HISTORIAL (diff de
+    cambios), folios S-XXX/L-XXX, duplicados por teléfono (estado 'Posible duplicado',
+    los resuelve admin sin revelar datos), papelera (soft-delete + recuperar admin),
+    gestión de usuarios desde la app (alta L-XXX, reset password, bloquear con purga
+    de sesiones), exportar CSV, salt nuevo (placeholder en repo, real solo en editor),
+    eliminar _testLogin, todo por POST.
+[✓] semilla_v2.gs: inicializarV2() + importarLocalidades() + limpiarDatosDemo().
+[✓] Frontend: app.html (tabs sim/actor, verFichaSim, sec-admin con 3 pestañas,
+    filtros por líder/sección/estado, gate de aviso de privacidad), aviso-privacidad.html,
+    api.js (15 acciones nuevas, todo por POST), auth.js (logout real), sw.js CACHE v3,
+    css (tabs, estados, dup-par).
+[✓] Limpieza: eliminados app_inline.js (muerto) y codigo.txt (duplicado).
+[✓] README.md reescrito para V2.
+
+Pendiente al hacer el deploy:
+[ ] 1. Pegar codigo.gs v2 + semilla_v2.gs en Apps Script del Sheet nuevo
+       (borrar antes los .gs heredados de la copia).
+[ ] 2. APP_SALT real en codigo.gs + ADMIN_PASSWORD_V2 real en semilla_v2.gs.
+[ ] 3. inicializarV2() → limpiarDatosDemo() → _LOCALIDADES_SEED + importarLocalidades().
+[ ] 4. Implementar → Aplicación web → URL /exec → js/config.js.
+[ ] 5. Checklist de verificación del README (login admin/líder, duplicados,
+       aislamiento, papelera, historial, exportar, PWA v3).
+
+=========================================================
+FIN DEL ROADMAP V2
+=========================================================

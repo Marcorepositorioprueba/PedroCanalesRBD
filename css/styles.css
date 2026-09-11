@@ -1023,6 +1023,33 @@ button.btn-loading::after {
   to   { transform: scale(1); opacity: 1; }
 }
 
+/* V2 — tabs de captura / admin, estados, duplicados, tabla admin */
+.tab-switch {
+  display: flex; gap: 6px; margin-bottom: 16px;
+  background: var(--bg-deco); padding: 4px; border-radius: 10px;
+}
+.atab {
+  flex: 1; min-height: 40px;
+  border: none; background: transparent; border-radius: 8px;
+  font-weight: 600; font-size: 13px; color: var(--muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.atab.active {
+  background: var(--primary); color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.est-activo     { background: #E7F3E8 !important; color: #1D6B25 !important; }
+.est-inactivo   { background: #ECECEC !important; color: #666 !important; }
+.est-duplicado  { background: #FFF4E0 !important; color: #9A6A1B !important; }
+.dup-par {
+  border: 1px dashed var(--primary); border-radius: 12px;
+  padding: 12px; margin-bottom: 14px;
+  display: grid; gap: 10px;
+}
+.admin-panel { margin-top: 4px; }
+.check-inline input { width: auto; }
+.ficha-section a { color: var(--primary); font-weight: 600; }
+
 /* IMPRESIÓN — limpio para papel/PDF */
 @media print {
   body { background: white; font-size: 11pt; color: #000; }

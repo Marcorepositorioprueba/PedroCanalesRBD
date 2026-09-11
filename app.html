@@ -92,6 +92,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
           <span>Ficha</span>
         </button>
+        <button type="button" class="qa-btn" id="qa-admin" data-go="admin" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span>Admin</span>
+        </button>
       </nav>
       <div class="search-bar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
@@ -108,8 +112,19 @@
           </svg>
         </summary>
         <div class="form-grid" style="margin-top:12px;">
+          <select id="f-tipo">
+            <option value="sim">Simpatizantes</option>
+            <option value="actor">Actores territoriales</option>
+          </select>
           <select id="f-municipio"><option value="">Todos los municipios</option></select>
-          <select id="f-localidad" disabled><option value="">Todas las localidades</option></select>
+          <select id="f-localidad" disabled><option value="">Todas las colonias/localidades</option></select>
+          <input type="text" id="f-seccion" inputmode="numeric" placeholder="Sección electoral (ej. 1234)" style="display:none;">
+          <select id="f-lider" style="display:none;"><option value="">Todos los líderes</option></select>
+          <select id="f-estado" style="display:none;">
+            <option value="Activo">Activos</option>
+            <option value="Posible duplicado">Posibles duplicados</option>
+            <option value="Inactivo">Inactivos (papelera)</option>
+          </select>
           <select id="f-perfil"><option value="">Cualquier perfil</option></select>
           <select id="f-prioridad"><option value="">Cualquier prioridad</option></select>
           <select id="f-estatus"><option value="">Cualquier estatus</option></select>
@@ -141,11 +156,60 @@
           <path d="M12 8v8M8 12h8"/>
         </svg>
         <div>
-          <div class="section-title">Nuevo registro</div>
-          <div class="section-subtitle">Captura una persona, organización o actor territorial</div>
+          <div class="section-title" id="nuevo-titulo">Nuevo registro</div>
+          <div class="section-subtitle" id="nuevo-subtitulo">Captura un simpatizante o actor territorial</div>
         </div>
       </div>
-      <form id="frm-nuevo" class="form-grid">
+      <div class="tab-switch" id="tabs-nuevo">
+        <button type="button" class="atab active" data-ntab="sim">Simpatizante</button>
+        <button type="button" class="atab" data-ntab="actor">Líder / actor territorial</button>
+      </div>
+
+      <!-- FICHA SIMPLE: SIMPATIZANTE -->
+      <form id="frm-nuevo-sim" class="form-grid">
+        <label>Nombre completo *
+          <input type="text" id="ns-nombre" required autocomplete="name">
+        </label>
+        <label>Teléfono / WhatsApp *
+          <input type="tel" id="ns-telefono" required inputmode="tel" placeholder="10 dígitos">
+        </label>
+        <label>Colonia o localidad *
+          <select id="ns-colonia" required><option value="">— Selecciona —</option></select>
+          <input type="text" id="ns-colonia-otra" placeholder="Escribe la colonia o localidad..." style="display:none;margin-top:6px;">
+        </label>
+        <label>Sección electoral
+          <input type="text" id="ns-seccion" inputmode="numeric" pattern="[0-9]{3,5}" placeholder="3 a 5 dígitos (opcional)">
+          <label class="check-inline" style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;">
+            <input type="checkbox" id="ns-no-conoce">
+            <span>No la conoce</span>
+          </label>
+        </label>
+        <label>Observaciones
+          <textarea id="ns-obs" rows="2" placeholder="Solo si hay información útil (opcional)"></textarea>
+        </label>
+        <label>Consentimiento de contacto *
+          <label class="check-inline" style="display:flex;align-items:center;gap:6px;font-size:13px;">
+            <input type="checkbox" id="ns-consent" required>
+            <span>La persona acepta ser contactada (<a href="aviso-privacidad.html" target="_blank">aviso de privacidad</a>)</span>
+          </label>
+        </label>
+        <label>Medio del consentimiento
+          <select id="ns-consent-medio">
+            <option value="app">Por la app</option>
+            <option value="verbal">Verbal</option>
+            <option value="escrito">Escrito</option>
+          </select>
+        </label>
+        <button type="submit" class="btn-primary-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Guardar simpatizante</span>
+        </button>
+      </form>
+
+      <!-- FICHA DETALLADA: LÍDER / ACTOR TERRITORIAL -->
+      <form id="frm-nuevo" class="form-grid" style="display:none;">
         <label>Municipio *
           <select id="n-municipio" required></select>
         </label>
@@ -257,6 +321,68 @@
       </div>
     </section>
 
+    <!-- ADMIN (solo admin) -->
+    <section id="sec-admin" class="section">
+      <div class="section-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="32" height="32">
+          <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <div>
+          <div class="section-title">Administración</div>
+          <div class="section-subtitle">Líderes, duplicados y papelera</div>
+        </div>
+      </div>
+      <div class="tab-switch" id="tabs-admin">
+        <button type="button" class="atab active" data-atab="usuarios">Líderes y usuarios</button>
+        <button type="button" class="atab" data-atab="duplicados">Duplicados</button>
+        <button type="button" class="atab" data-atab="papelera">Papelera</button>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="admin-usuarios" class="admin-panel">
+        <div class="ficha-section">
+          <h4>Alta de líder / capturista</h4>
+          <form id="frm-usuario-nuevo" class="form-grid">
+            <label>Usuario
+              <input type="text" id="u-usuario" required autocomplete="off" placeholder="ej. juanperez">
+            </label>
+            <label>Nombre completo
+              <input type="text" id="u-nombre" required placeholder="ej. Juan Pérez">
+            </label>
+            <label>Rol
+              <select id="u-rol">
+                <option value="lider">Líder / capturista</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </label>
+            <label>Contraseña
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="u-password" required autocomplete="new-password" placeholder="mínimo 8 caracteres">
+                <button type="button" class="ghost" id="u-generar" style="min-height:38px;font-size:12px;white-space:nowrap;">Generar</button>
+              </div>
+            </label>
+            <button type="submit" class="btn-primary-lg" style="min-height:44px;font-size:15px;">Crear cuenta</button>
+          </form>
+        </div>
+        <div id="admin-usuarios-lista"></div>
+      </div>
+
+      <!-- DUPLICADOS -->
+      <div id="admin-duplicados" class="admin-panel" style="display:none;">
+        <div id="admin-duplicados-lista"></div>
+      </div>
+
+      <!-- PAPELERA -->
+      <div id="admin-papelera" class="admin-panel" style="display:none;">
+        <div id="admin-papelera-lista"></div>
+      </div>
+
+      <div class="post-save" style="margin-top:16px;">
+        <button type="button" class="ghost" id="btn-exportar-csv" style="min-height:44px;">⬇ Exportar CSV (activos)</button>
+      </div>
+    </section>
+
   </main>
 
   <nav class="bottom-nav">
@@ -275,6 +401,10 @@
     <button data-go="ficha" id="nav-ficha" disabled>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
       <span>Ficha</span>
+    </button>
+    <button data-go="admin" id="nav-admin" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>Admin</span>
     </button>
   </nav>
 
@@ -298,11 +428,29 @@
             '<div class="empty">No hay sesión. <a href="index.html">Inicia sesión</a></div>';
           return;
         }
-        document.getElementById('hdr-usuario').textContent = ses.usuario;
-        // Guardar rol para usar en permisos UI
+        document.getElementById('hdr-usuario').textContent = (ses.nombre && ses.nombre !== ses.usuario)
+          ? ses.nombre + ' (' + ses.usuario + ')' : ses.usuario;
+        // Guardar rol para usar en permisos UI (el backend es la autoridad;
+        // aquí solo ocultamos botones)
         this.rol = ses.rol || 'operador';
         this.nombreUsuario = ses.nombre || ses.usuario;
+        this.liderId = ses.lider_id || '';
         this.esAdmin = this.rol === 'admin';
+        this.tipoActual = 'sim';       // tipo de búsqueda/captura activo
+        this.fichaTipo = 'registro';   // tipo de ficha abierta
+
+        // Botón Admin solo para admin
+        if (this.esAdmin) {
+          const qaA = document.getElementById('qa-admin');
+          const navA = document.getElementById('nav-admin');
+          if (qaA) qaA.style.display = '';
+          if (navA) navA.style.display = '';
+        }
+        // Líder: solo captura simpatizantes (ocultar pestaña actor)
+        if (this.rol === 'lider') {
+          const tabActor = document.querySelector('#tabs-nuevo [data-ntab="actor"]');
+          if (tabActor) tabActor.style.display = 'none';
+        }
 
         // FIX PREVENTIVO: si la sesión no trae rol (cache vieja),
         // pedirlo al backend y actualizar localStorage en paralelo.
@@ -334,18 +482,44 @@
         document.getElementById('btn-inactivar').onclick = () => App.confirmarInactivar();
         document.getElementById('btn-reactivar').onclick = () => App.reactivar();
         // Botón flotante de Guardar (edición de ficha)
-        document.getElementById('fab-save').onclick = () => App.guardarEdicion(App.currentId);
+        document.getElementById('fab-save').onclick = () => {
+          if (App.fichaTipo === 'sim') App.guardarEdicionSim(App.currentFolio);
+          else App.guardarEdicion(App.currentId);
+        };
+
+        // Tabs de captura (sim / actor)
+        document.querySelectorAll('#tabs-nuevo .atab').forEach(b => {
+          b.onclick = () => App.cambiarTabCaptura(b.dataset.ntab);
+        });
+        // Tabs del panel admin
+        document.querySelectorAll('#tabs-admin .atab').forEach(b => {
+          b.onclick = () => App.cambiarTabAdmin(b.dataset.atab);
+        });
+        document.getElementById('btn-exportar-csv').onclick = () => App.exportarCSV();
+        document.getElementById('frm-usuario-nuevo').onsubmit = (e) => App.crearUsuario(e);
+        document.getElementById('u-generar').onclick = () => {
+          document.getElementById('u-password').value = 'PC' + Math.random().toString(36).slice(2, 10) + 'A1';
+        };
 
         // Eventos
         document.getElementById('btn-buscar').onclick = () => App.buscar();
+        document.getElementById('f-tipo').onchange = () => {
+          App.tipoActual = document.getElementById('f-tipo').value;
+          App.ajustarFiltrosHome();
+          App.buscar();
+        };
         document.getElementById('f-municipio').onchange = () => { App.cargarLocalidadesFiltro(); App.buscar(); };
-        ['f-localidad','f-perfil','f-prioridad','f-estatus'].forEach(id => {
+        ['f-localidad','f-perfil','f-prioridad','f-estatus','f-lider','f-estado'].forEach(id => {
           document.getElementById(id).onchange = () => App.buscar();
         });
+        document.getElementById('f-seccion').onkeydown = (e) => { if (e.key === 'Enter') App.buscar(); };
         document.getElementById('btn-limpiar-f').onclick = () => {
-          ['f-municipio','f-localidad','f-perfil','f-prioridad','f-estatus'].forEach(id => {
+          ['f-municipio','f-localidad','f-perfil','f-prioridad','f-estatus','f-lider','f-estado','f-seccion'].forEach(id => {
             document.getElementById(id).value = '';
           });
+          document.getElementById('f-tipo').value = 'sim';
+          App.tipoActual = 'sim';
+          App.ajustarFiltrosHome();
           App.cargarLocalidadesFiltro();
           App.buscar();
         };
@@ -353,6 +527,10 @@
         // Event delegation: captura el change en cualquier momento
         document.addEventListener('change', (e) => {
           if (e.target && e.target.id === 'n-municipio') App.filtrarLocalidades();
+          if (e.target && e.target.id === 'ns-colonia') {
+            const otra = document.getElementById('ns-colonia-otra');
+            otra.style.display = e.target.value === '__otra__' ? 'block' : 'none';
+          }
           const otrosMap = {
             'n-organizacion': 'n-organizacion-otro',
             'n-perfil':       'n-perfil-otro',
@@ -364,10 +542,83 @@
           }
         });
         document.getElementById('frm-nuevo').onsubmit = (e) => App.guardarNuevo(e);
+        document.getElementById('frm-nuevo-sim').onsubmit = (e) => App.guardarNuevoSim(e);
 
         await this.cargarCatalogo();
+        this.ajustarFiltrosHome();
+        this.gateAvisoPrivacidad();
         await this.buscar();
         this.iniciarCintillo();
+      },
+
+      // Muestra/oculta filtros según el tipo de registro activo
+      ajustarFiltrosHome() {
+        const esSim = this.tipoActual === 'sim';
+        ['f-seccion', 'f-estado'].forEach(id => {
+          document.getElementById(id).style.display = esSim ? '' : 'none';
+        });
+        // Filtro líder: solo admin y solo simpatizantes
+        document.getElementById('f-lider').style.display = (esSim && this.esAdmin) ? '' : 'none';
+        ['f-perfil', 'f-prioridad', 'f-estatus'].forEach(id => {
+          document.getElementById(id).style.display = esSim ? 'none' : '';
+        });
+        // Localidad sirve como colonia en simpatizantes
+        document.querySelector('#f-localidad').nextElementSibling; // noop
+      },
+
+      // Gate del aviso de privacidad: una vez por dispositivo
+      gateAvisoPrivacidad() {
+        if (localStorage.getItem('pc_aviso_aceptado_v1')) return;
+        const html = `
+          <div class="modal-backdrop" id="modal-aviso">
+            <div class="modal-card" role="dialog" aria-modal="true">
+              <div class="modal-title">Aviso de privacidad</div>
+              <div class="modal-text">
+                Esta aplicación registra datos personales de simpatizantes
+                (nombre, teléfono, ubicación) con finalidad de vinculación
+                ciudadana. La información es confidencial y solo se usa para
+                contacto organizado por el equipo de Pedro Canales.
+                <br><br>
+                Lee el <a href="aviso-privacidad.html" target="_blank">aviso de privacidad completo</a>
+                antes de continuar.
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="modal-danger" id="aviso-aceptar">Aceptar y continuar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+        document.getElementById('aviso-aceptar').onclick = () => {
+          localStorage.setItem('pc_aviso_aceptado_v1', new Date().toISOString());
+          const m = document.getElementById('modal-aviso');
+          if (m) m.remove();
+        };
+      },
+
+      // Tabs de captura: simpatizante / actor territorial
+      cambiarTabCaptura(tipo) {
+        document.querySelectorAll('#tabs-nuevo .atab').forEach(b => {
+          b.classList.toggle('active', b.dataset.ntab === tipo);
+        });
+        document.getElementById('frm-nuevo-sim').style.display = tipo === 'sim' ? '' : 'none';
+        document.getElementById('frm-nuevo').style.display = tipo === 'actor' ? '' : 'none';
+        document.getElementById('nuevo-titulo').textContent =
+          tipo === 'sim' ? 'Nuevo simpatizante' : 'Nuevo actor territorial';
+        const box = document.getElementById('post-save-box');
+        if (box) box.remove();
+      },
+
+      // Tabs del panel admin
+      async cambiarTabAdmin(tab) {
+        document.querySelectorAll('#tabs-admin .atab').forEach(b => {
+          b.classList.toggle('active', b.dataset.atab === tab);
+        });
+        document.getElementById('admin-usuarios').style.display = tab === 'usuarios' ? '' : 'none';
+        document.getElementById('admin-duplicados').style.display = tab === 'duplicados' ? '' : 'none';
+        document.getElementById('admin-papelera').style.display = tab === 'papelera' ? '' : 'none';
+        if (tab === 'duplicados') await this.cargarDuplicados();
+        if (tab === 'papelera') await this.cargarPapelera();
       },
 
       // Cintillo lateral con frases que rotan cada 6s
@@ -431,8 +682,10 @@
         document.querySelectorAll('.quick-actions .qa-btn').forEach(b => {
           b.classList.toggle('active', b.dataset.go === seccion);
         });
-        const titulos = { home: 'Vinculación Territorial', nuevo: 'Nuevo registro', ficha: 'Ficha', buscar: 'Buscar' };
+        const titulos = { home: 'Vinculación Territorial', nuevo: 'Nuevo registro', ficha: 'Ficha', buscar: 'Buscar', admin: 'Administración' };
         document.getElementById('hdr-titulo').textContent = titulos[seccion] || 'Vinculación Territorial';
+        if (seccion === 'admin' && this.esAdmin) this.cargarAdmin();
+        if (seccion === 'nuevo') this.cambiarTabCaptura('sim');
       },
 
       async cargarCatalogo() {
@@ -484,6 +737,36 @@
           // localidades de inmediato para ese valor preseleccionado.
           this.cargarLocalidadesFiltro();
           this.filtrarLocalidades();
+
+          // Colonia del form simpatizante: localidades + opción "(otra)"
+          const selCol = document.getElementById('ns-colonia');
+          selCol.innerHTML = '<option value="">— Selecciona —</option>';
+          const todasLocs = (this.catalogo.localidades || [])
+            .filter(l => l && l.nombre)
+            .sort((a,b) => String(a.nombre).localeCompare(String(b.nombre)));
+          todasLocs.forEach(l => {
+            const o = document.createElement('option');
+            o.value = String(l.nombre); o.textContent = String(l.nombre);
+            selCol.appendChild(o);
+          });
+          const otra = document.createElement('option');
+          otra.value = '__otra__'; otra.textContent = 'Otra (especificar)';
+          selCol.appendChild(otra);
+
+          // Filtro de líder (home, admin) desde el directorio de usuarios
+          if (this.esAdmin) {
+            try {
+              const usuarios = await API.usuariosListar();
+              const selLider = document.getElementById('f-lider');
+              selLider.innerHTML = '<option value="">Todos los líderes</option>';
+              usuarios.filter(u => u.rol === 'lider').forEach(u => {
+                const o = document.createElement('option');
+                o.value = u.usuario;
+                o.textContent = (u.lider_id ? u.lider_id + ' · ' : '') + u.nombre + ' (' + u.usuario + ')';
+                selLider.appendChild(o);
+              });
+            } catch (_) { /* no bloqueante */ }
+          }
         } catch (e) {
           UI.toast('Error cargando catálogos: ' + e.message, 'error');
         }
@@ -546,30 +829,44 @@
       async buscar() {
         // Resetear resultados y offset
         this.offset = 0;
-        this.filtrosActuales = {
-          q: document.getElementById('q').value,
-          municipio: document.getElementById('f-municipio').value,
-          localidad: document.getElementById('f-localidad').value,
-          perfil:    document.getElementById('f-perfil').value,
-          prioridad: document.getElementById('f-prioridad').value,
-          estatus:   document.getElementById('f-estatus').value
-        };
+        const esSim = this.tipoActual === 'sim';
+        if (esSim) {
+          // f-localidad sirve como filtro de colonia en simpatizantes
+          this.filtrosActuales = {
+            q:       document.getElementById('q').value,
+            colonia: document.getElementById('f-localidad').value,
+            seccion: document.getElementById('f-seccion').value.trim(),
+            lider:   document.getElementById('f-lider').value,
+            estados: document.getElementById('f-estado').value || 'Activo'
+          };
+        } else {
+          this.filtrosActuales = {
+            q: document.getElementById('q').value,
+            municipio: document.getElementById('f-municipio').value,
+            localidad: document.getElementById('f-localidad').value,
+            perfil:    document.getElementById('f-perfil').value,
+            prioridad: document.getElementById('f-prioridad').value,
+            estatus:   document.getElementById('f-estatus').value
+          };
+        }
         this.hayFiltros = Object.values(this.filtrosActuales).some(v => v && v.trim());
         const cont = document.getElementById('resultados');
         cont.innerHTML = '<div class="empty">Buscando...</div>';
         try {
           const data = await this._pagina();
-          this._renderResultados(data, true);
+          if (esSim) this._renderResultadosSim(data, true);
+          else this._renderResultados(data, true);
         } catch (e) {
           cont.innerHTML = '<div class="empty">Error: ' + e.message + '</div>';
         }
       },
 
       async _pagina() {
-        return API.buscar(Object.assign({}, this.filtrosActuales, {
-          limit: this.LIMIT || 20,
-          offset: this.offset
-        }));
+        return (this.tipoActual === 'sim' ? API.buscarSim : API.buscar)
+          (Object.assign({}, this.filtrosActuales, {
+            limit: this.LIMIT || 20,
+            offset: this.offset
+          }));
       },
 
       _renderResultados(data, esReset) {
@@ -674,6 +971,82 @@
         if (btnImp) btnImp.style.display = 'inline-flex';
       },
 
+      _renderResultadosSim(data, esReset) {
+        const cont = document.getElementById('resultados');
+        if (!data.resultados.length) {
+          cont.innerHTML = UI.emptyState(this.hayFiltros
+            ? 'Sin resultados con esos filtros.'
+            : 'Aún no hay simpatizantes. Toca "Nuevo" para capturar el primero.');
+          return;
+        }
+
+        const iniciales = (nombre) => {
+          const s = String(nombre || '').trim();
+          if (!s) return '?';
+          const partes = s.split(/\s+/).filter(Boolean);
+          if (partes.length === 1) return partes[0].substring(0, 2).toUpperCase();
+          return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+        };
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+        const estadoClass = (e) => ({
+          'Activo': 'est-activo',
+          'Inactivo': 'est-inactivo',
+          'Posible duplicado': 'est-duplicado'
+        })[e] || 'est-inactivo';
+        const seccionTxt = (s) => String(s) === 'NO_CONOCE' ? 'No la conoce' : (s || '');
+
+        const htmlTarjetas = data.resultados.map(r => `
+          <article class="card card-sim" data-folio="${safe(r.folio)}">
+            <div class="card-head">
+              <div class="card-avatar" aria-hidden="true">${iniciales(r.nombre)}</div>
+              <div class="card-id">
+                <h3 class="card-name">${safe(r.nombre)}</h3>
+                <div class="card-geo">${safe(r.folio)}${r.seccion ? ' · Sección ' + safe(seccionTxt(r.seccion)) : ''}</div>
+              </div>
+            </div>
+            <div class="card-geo">📱 ${safe(r.telefono)} · 📍 ${safe(r.colonia)}</div>
+            <div class="card-badges">
+              <span class="badge-dot ${estadoClass(r.estado)}">${safe(r.estado || 'Activo')}</span>
+            </div>
+            ${r.observaciones ? `
+              <div class="card-next">
+                <span class="card-next-label">Observaciones</span>
+                <span class="card-next-text">${safe(r.observaciones)}</span>
+              </div>
+            ` : ''}
+            <div class="card-cta">VER FICHA →</div>
+          </article>
+        `).join('');
+
+        const meta = `<div class="results-meta">Mostrando ${Math.min(data.offset + data.resultados.length, data.total)} de ${data.total}${this.hayFiltros ? ' (filtrado)' : ''}</div>`;
+        const cards = `<div class="cards">${htmlTarjetas}</div>`;
+        const restantes = data.total - (data.offset + data.resultados.length);
+        const mas = restantes > 0
+          ? `<button type="button" class="ghost" id="btn-ver-mas" style="width:100%;margin-top:12px;min-height:44px;">Ver ${Math.min(restantes, this.LIMIT || 20)} más</button>`
+          : '';
+
+        if (esReset) {
+          cont.innerHTML = meta + cards + mas;
+        } else {
+          const cardsBox = cont.querySelector('.cards');
+          if (cardsBox) cardsBox.insertAdjacentHTML('beforeend', htmlTarjetas);
+          cont.querySelector('.results-meta').innerHTML =
+            `Mostrando ${Math.min(data.offset + data.resultados.length, data.total)} de ${data.total}${this.hayFiltros ? ' (filtrado)' : ''}`;
+          const oldBtn = document.getElementById('btn-ver-mas');
+          if (oldBtn) oldBtn.remove();
+          if (mas) cont.insertAdjacentHTML('beforeend', mas);
+        }
+
+        cont.querySelectorAll('.card-sim').forEach(c => {
+          if (!c.dataset.wired) {
+            c.dataset.wired = '1';
+            c.onclick = () => App.verFichaSim(c.dataset.folio);
+          }
+        });
+        const masBtn = document.getElementById('btn-ver-mas');
+        if (masBtn) masBtn.onclick = () => App.cargarMas();
+      },
+
       async cargarMas() {
         this.offset += this.LIMIT || 20;
         const btn = document.getElementById('btn-ver-mas');
@@ -689,6 +1062,7 @@
 
       async verFicha(id) {
         this.currentId = id;
+        this.fichaTipo = 'registro';
         // Re-leer sesión en cada ficha (evita cache desactualizada)
         const ses = Auth.getSession();
         const esAdmin = !!(ses && ses.rol === 'admin');
@@ -795,6 +1169,412 @@
         }
       },
 
+      // ============ FICHA SIMPATIZANTE ============
+      async verFichaSim(folio) {
+        this.currentFolio = folio;
+        this.fichaTipo = 'sim';
+        const ses = Auth.getSession();
+        const esAdmin = !!(ses && ses.rol === 'admin');
+        this.esAdmin = esAdmin;
+
+        document.getElementById('nav-ficha').disabled = false;
+        const qaFicha = document.getElementById('qa-ficha');
+        if (qaFicha) qaFicha.disabled = false;
+        document.getElementById('btn-editar').style.display = 'inline-flex';
+        document.getElementById('btn-editar').textContent = '✎ Editar';
+        document.getElementById('btn-imprimir-ficha').style.display = 'none';
+        document.getElementById('btn-inactivar').style.display = 'none';
+        document.getElementById('btn-reactivar').style.display = 'none';
+        this.go('ficha');
+        const cont = document.getElementById('ficha-contenido');
+        cont.innerHTML = '<div class="empty">Cargando...</div>';
+        try {
+          const data = await API.obtenerSim(folio);
+          const r = data.simpatizante;
+          const estado = String(r.estado || 'Activo');
+          const esDueno = String(r.lider_usuario || '') === String(ses.usuario);
+          document.getElementById('btn-inactivar').style.display =
+            (estado !== 'Inactivo' && (esAdmin || esDueno)) ? 'inline-flex' : 'none';
+          document.getElementById('btn-reactivar').style.display =
+            (estado === 'Inactivo' && esAdmin) ? 'inline-flex' : 'none';
+
+          const safe = (s) => String(s || '').replace(/[<>]/g, '');
+          const seccionTxt = String(r.seccion) === 'NO_CONOCE'
+            ? 'No la conoce' : safe(r.seccion);
+          const fechaC = r.fecha_creacion ? new Date(r.fecha_creacion).toLocaleString() : '-';
+
+          cont.innerHTML = `
+            <div class="ficha-section">
+              <h4 style="font-size:14px;color:var(--text);text-transform:none;font-weight:600;">${safe(r.nombre)}</h4>
+              <p><b>${safe(r.folio)}</b> · 📱 ${safe(r.telefono)}</p>
+              <div class="badges" style="margin-top:6px;">
+                <span class="badge-dot ${estado === 'Activo' ? 'est-activo' : estado === 'Inactivo' ? 'est-inactivo' : 'est-duplicado'}">${safe(estado)}</span>
+                <span class="badge-dot ${r.consentimiento === 'SI' ? 'est-activo' : 'est-inactivo'}">Consentimiento: ${safe(r.consentimiento || '-')} (${safe(r.consentimiento_medio || '-')})</span>
+              </div>
+            </div>
+            <div class="ficha-section">
+              <h4>Datos</h4>
+              <p><b>Colonia o localidad:</b> ${safe(r.colonia)}</p>
+              <p><b>Sección electoral:</b> ${seccionTxt || '—'}</p>
+              ${r.observaciones ? `<p><b>Observaciones:</b> ${safe(r.observaciones)}</p>` : ''}
+              <p style="color:var(--muted);font-size:12px;margin-top:8px;">
+                Registrado por ${safe(r.lider_usuario || '-')} ${r.lider_id ? '(' + safe(r.lider_id) + ')' : ''}
+                el ${fechaC}
+              </p>
+            </div>
+            ${data.historial ? `
+              <div class="ficha-section">
+                <h4>Historial de cambios</h4>
+                ${data.historial.length ? data.historial.map(h => `
+                  <div class="crono-item">
+                    <div class="fecha">${new Date(h.fecha).toLocaleString()} · ${safe(h.usuario)}</div>
+                    <div><b>${safe(h.accion)}</b>${h.campo ? ` — ${safe(h.campo)}` : ''}</div>
+                    ${(h.valor_anterior || h.valor_nuevo) ? `<div style="font-size:12px;color:var(--muted);">${safe(h.valor_anterior || '(vacío)')} → ${safe(h.valor_nuevo || '(vacío)')}</div>` : ''}
+                  </div>
+                `).join('') : '<p style="color:var(--muted);font-size:13px;">Sin cambios registrados.</p>'}
+              </div>
+            ` : ''}
+          `;
+        } catch (e) {
+          cont.innerHTML = '<div class="empty">Error: ' + e.message + '</div>';
+        }
+      },
+
+      async modoEdicionSim() {
+        if (!this.currentFolio) return;
+        const btn = document.getElementById('btn-editar');
+        const fab = document.getElementById('fab-save');
+        if (btn.textContent === '✎ Editar') {
+          try {
+            const data = await API.obtenerSim(this.currentFolio);
+            this.renderFormEdicionSim(data.simpatizante);
+            btn.textContent = '✕ Cancelar';
+            fab.style.display = 'inline-flex';
+            this._fabScrollToTop();
+          } catch (e) {
+            UI.toast('Error: ' + e.message, 'error');
+          }
+        } else {
+          fab.style.display = 'none';
+          await this.verFichaSim(this.currentFolio);
+        }
+      },
+
+      renderFormEdicionSim(r) {
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+        const cont = document.getElementById('ficha-contenido');
+        const locs = (this.catalogo.localidades || [])
+          .filter(l => l && l.nombre)
+          .map(l => String(l.nombre));
+        const coloniaActual = safe(r.colonia);
+        const esOtra = coloniaActual && locs.indexOf(coloniaActual) === -1;
+        const opcionesLocs = [...new Set(locs.concat(coloniaActual ? [coloniaActual] : []))]
+          .sort((a,b) => a.localeCompare(b));
+        cont.innerHTML = `
+          <form id="frm-editar-sim" class="form-grid ficha-section" style="background:var(--bg-deco);border-color:var(--primary);">
+            <h4 style="color:var(--primary);">Editando simpatizante ${safe(r.folio)}</h4>
+            <label>Nombre completo *
+              <input type="text" id="es-nombre" required value="${safe(r.nombre)}">
+            </label>
+            <label>Teléfono / WhatsApp *
+              <input type="tel" id="es-telefono" required value="${safe(r.telefono)}">
+            </label>
+            <label>Colonia o localidad *
+              <select id="es-colonia" required>
+                ${opcionesLocs.map(v => `<option value="${safe(v)}" ${v === coloniaActual ? 'selected' : ''}>${safe(v)}</option>`).join('')}
+                <option value="__otra__" ${esOtra ? 'selected' : ''}>Otra (especificar)</option>
+              </select>
+              <input type="text" id="es-colonia-otra" placeholder="Escribe la colonia..." value="${esOtra ? coloniaActual : ''}" style="display:${esOtra ? 'block' : 'none'};margin-top:6px;">
+            </label>
+            <label>Sección electoral
+              <input type="text" id="es-seccion" value="${String(r.seccion) === 'NO_CONOCE' ? '' : safe(r.seccion)}" placeholder="3 a 5 dígitos">
+              <label class="check-inline" style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px;">
+                <input type="checkbox" id="es-no-conoce" ${String(r.seccion) === 'NO_CONOCE' ? 'checked' : ''}>
+                <span>No la conoce</span>
+              </label>
+            </label>
+            <label>Observaciones
+              <textarea id="es-obs" rows="2">${safe(r.observaciones)}</textarea>
+            </label>
+            <div class="post-save">
+              <button type="submit" class="btn-primary-lg" id="es-guardar" style="min-height:44px;font-size:15px;">Guardar cambios</button>
+            </div>
+          </form>
+        `;
+        document.getElementById('es-colonia').onchange = (e) => {
+          document.getElementById('es-colonia-otra').style.display =
+            e.target.value === '__otra__' ? 'block' : 'none';
+        };
+        document.getElementById('frm-editar-sim').onsubmit = (e) => {
+          e.preventDefault();
+          App.guardarEdicionSim(this.currentFolio);
+        };
+      },
+
+      async guardarEdicionSim(folio) {
+        const datos = {
+          folio: folio,
+          nombre: document.getElementById('es-nombre').value.trim(),
+          telefono: document.getElementById('es-telefono').value.trim()
+        };
+        const selCol = document.getElementById('es-colonia');
+        const otraVal = document.getElementById('es-colonia-otra').value.trim();
+        datos.colonia = selCol.value === '__otra__' ? otraVal : selCol.value;
+        const secVal = document.getElementById('es-seccion').value.trim();
+        const noConoce = document.getElementById('es-no-conoce').checked;
+        if (noConoce) datos.seccion = 'NO_CONOCE';
+        else if (secVal) datos.seccion = secVal;
+        datos.observaciones = document.getElementById('es-obs').value.trim();
+
+        if (!datos.nombre || !datos.telefono || !datos.colonia) {
+          UI.toast('Nombre, teléfono y colonia son requeridos.', 'error');
+          return;
+        }
+        const fab = document.getElementById('fab-save');
+        UI.loading(fab, true);
+        try {
+          await API.actualizarSim(datos);
+          UI.toast('✓ Simpatizante actualizado', 'success');
+          this._hideFab();
+          await this.verFichaSim(folio);
+          this.buscar();
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        } finally {
+          UI.loading(fab, false);
+        }
+      },
+
+      async confirmarInactivarSim() {
+        const folio = this.currentFolio;
+        if (!folio) return;
+        const nombreSafe = (document.querySelector('#ficha-contenido h4') || {textContent: folio}).textContent.trim().replace(/[<>]/g, '');
+        const html = `
+          <div class="modal-backdrop" id="modal-inact">
+            <div class="modal-card" role="dialog" aria-modal="true">
+              <div class="modal-title">Inactivar simpatizante</div>
+              <div class="modal-text">
+                Vas a marcar <b>${nombreSafe}</b> (${folio}) como Inactivo.
+                Quedará en la papelera de administración y podrá recuperarse.
+              </div>
+              <label class="modal-check">
+                <input type="checkbox" id="confirm-check">
+                <span>Entiendo que este cambio queda registrado para auditoría.</span>
+              </label>
+              <div class="modal-actions">
+                <button type="button" class="ghost" id="confirm-cancel">Cancelar</button>
+                <button type="button" class="modal-danger" id="confirm-ok" disabled>Inactivar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', html);
+        const backdrop = document.getElementById('modal-inact');
+        const chk = document.getElementById('confirm-check');
+        const ok  = document.getElementById('confirm-ok');
+        const cerrar = () => { backdrop.remove(); document.removeEventListener('keydown', onEsc); };
+        const onEsc = (e) => { if (e.key === 'Escape') cerrar(); };
+        document.addEventListener('keydown', onEsc);
+        chk.onchange = () => { ok.disabled = !chk.checked; };
+        document.getElementById('confirm-cancel').onclick = cerrar;
+        backdrop.onclick = (e) => { if (e.target === backdrop) cerrar(); };
+        ok.onclick = async () => {
+          if (ok.disabled) return;
+          UI.loading(ok, true);
+          try {
+            await API.cambiarEstadoSim({ folio: folio, estado: 'Inactivo' });
+            UI.toast('✓ Simpatizante inactivado', 'success');
+            cerrar();
+            await this.verFichaSim(folio);
+            this.buscar();
+          } catch (e) {
+            UI.toast('Error: ' + e.message, 'error');
+          } finally {
+            UI.loading(ok, false);
+          }
+        };
+      },
+
+      // ============ PANEL ADMIN ============
+      async cargarAdmin() {
+        try {
+          const [usuarios, dups, papelera] = await Promise.all([
+            API.usuariosListar(),
+            API.duplicadosListar(),
+            API.buscarSim({ estados: 'Inactivo', limit: 200, offset: 0 })
+          ]);
+          this._renderUsuarios(usuarios);
+          this._renderDuplicados(dups);
+          this._renderPapelera(papelera);
+        } catch (e) {
+          UI.toast('Error cargando admin: ' + e.message, 'error');
+        }
+      },
+
+      _renderUsuarios(usuarios) {
+        const cont = document.getElementById('admin-usuarios-lista');
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+        cont.innerHTML = `
+          <div class="results-meta">${usuarios.length} usuarios</div>
+          ${usuarios.map(u => `
+            <div class="card">
+              <div class="card-head">
+                <div class="card-id">
+                  <h3 class="card-name">${safe(u.nombre)} ${u.lider_id ? `<span style="color:var(--muted);font-size:12px;">${safe(u.lider_id)}</span>` : ''}</h3>
+                  <div class="card-geo">@${safe(u.usuario)} · ${safe(u.rol)} · ${u.activo ? 'Activo' : 'BLOQUEADO'} · ${u.simpatizantes} simpatizantes</div>
+                </div>
+              </div>
+              <div class="card-badges">
+                <button type="button" class="ghost u-reset" data-u="${safe(u.usuario)}" style="min-height:34px;font-size:12px;">🔑 Reset password</button>
+                <button type="button" class="ghost u-bloq" data-u="${safe(u.usuario)}" data-activo="${!u.activo}" style="min-height:34px;font-size:12px;">${u.activo ? '⛔ Bloquear' : '↻ Desbloquear'}</button>
+              </div>
+            </div>
+          `).join('')}
+        `;
+        cont.querySelectorAll('.u-reset').forEach(b => {
+          b.onclick = () => {
+            const nueva = prompt('Nueva contraseña para @' + b.dataset.u + ' (mínimo 8 caracteres):');
+            if (!nueva) return;
+            API.usuarioPassword({ usuario: b.dataset.u, password: nueva })
+              .then(() => UI.toast('✓ Password actualizada', 'success'))
+              .catch(e => UI.toast('Error: ' + e.message, 'error'));
+          };
+        });
+        cont.querySelectorAll('.u-bloq').forEach(b => {
+          b.onclick = () => {
+            const activo = b.dataset.activo === 'true';
+            const accion = activo ? 'bloquear' : 'desbloquear';
+            if (!confirm('¿Seguro que quieres ' + accion + ' a @' + b.dataset.u + '?')) return;
+            API.usuarioBloquear({ usuario: b.dataset.u, activo: activo })
+              .then(() => { UI.toast('✓ Usuario ' + (activo ? 'desbloqueado' : 'bloqueado'), 'success'); App.cargarAdmin(); })
+              .catch(e => UI.toast('Error: ' + e.message, 'error'));
+          };
+        });
+      },
+
+      async crearUsuario(e) {
+        e.preventDefault();
+        const datos = {
+          usuario: document.getElementById('u-usuario').value.trim(),
+          nombre: document.getElementById('u-nombre').value.trim(),
+          rol: document.getElementById('u-rol').value,
+          password: document.getElementById('u-password').value
+        };
+        try {
+          const out = await API.usuarioCrear(datos);
+          UI.toast('✓ Cuenta creada: ' + out.usuario + (out.lider_id ? ' (' + out.lider_id + ')' : ''), 'success');
+          document.getElementById('frm-usuario-nuevo').reset();
+          await this.cargarAdmin();
+        } catch (e2) {
+          UI.toast('Error: ' + e2.message, 'error');
+        }
+      },
+
+      _renderDuplicados(pares) {
+        const cont = document.getElementById('admin-duplicados-lista');
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+        if (!pares.length) {
+          cont.innerHTML = '<div class="empty">No hay duplicados pendientes. ✓</div>';
+          return;
+        }
+        cont.innerHTML = pares.map(p => `
+          <div class="dup-par">
+            <div class="card">
+              <div class="card-id">
+                <h3 class="card-name">NUEVO · ${safe(p.nuevo.folio)}</h3>
+                <div class="card-geo">${safe(p.nuevo.nombre)} · 📱 ${safe(p.nuevo.telefono)} · ${safe(p.nuevo.colonia)}</div>
+              </div>
+              <div class="card-geo">Capturado por @${safe(p.nuevo.lider_usuario)} el ${new Date(p.nuevo.fecha_creacion).toLocaleString()}</div>
+            </div>
+            <div class="card">
+              <div class="card-id">
+                <h3 class="card-name">EXISTENTE · ${safe(p.existente ? p.existente.folio : '?')}</h3>
+                ${p.existente ? `<div class="card-geo">${safe(p.existente.nombre)} · 📱 ${safe(p.existente.telefono)} · ${safe(p.existente.colonia)}</div>
+                <div class="card-geo">Registrado por @${safe(p.existente.lider_usuario)} el ${new Date(p.existente.fecha_creacion).toLocaleString()}</div>` : '<div class="card-geo">Registro original no encontrado</div>'}
+              </div>
+            </div>
+            <div class="post-save">
+              <button type="button" class="btn-primary-lg dup-ok" data-folio="${safe(p.nuevo.folio)}" style="min-height:38px;font-size:13px;">✓ Aceptar ambos</button>
+              <button type="button" class="ghost dup-del" data-folio="${safe(p.nuevo.folio)}" style="min-height:38px;font-size:13px;">✕ Descartar nuevo</button>
+            </div>
+          </div>
+        `).join('');
+        cont.querySelectorAll('.dup-ok').forEach(b => {
+          b.onclick = () => App.resolverDuplicado(b.dataset.folio, 'aceptar');
+        });
+        cont.querySelectorAll('.dup-del').forEach(b => {
+          b.onclick = () => App.resolverDuplicado(b.dataset.folio, 'descartar');
+        });
+      },
+
+      async cargarDuplicados() {
+        try { this._renderDuplicados(await API.duplicadosListar()); }
+        catch (e) { UI.toast('Error: ' + e.message, 'error'); }
+      },
+
+      async resolverDuplicado(folio, resolucion) {
+        if (!confirm(resolucion === 'aceptar'
+          ? '¿Aceptar ambos registros (el nuevo quedará Activo)?'
+          : '¿Descartar el registro nuevo (quedará Inactivo)?')) return;
+        try {
+          await API.duplicadoResolver({ folio: folio, resolucion: resolucion });
+          UI.toast('✓ Duplicado resuelto', 'success');
+          await this.cargarDuplicados();
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        }
+      },
+
+      _renderPapelera(data) {
+        const cont = document.getElementById('admin-papelera-lista');
+        const safe = (s) => String(s || '').replace(/[<>]/g, '');
+        if (!data.resultados.length) {
+          cont.innerHTML = '<div class="empty">La papelera está vacía. ✓</div>';
+          return;
+        }
+        cont.innerHTML = data.resultados.map(r => `
+          <div class="card">
+            <div class="card-head">
+              <div class="card-id">
+                <h3 class="card-name">${safe(r.nombre)} <span style="color:var(--muted);font-size:12px;">${safe(r.folio)}</span></h3>
+                <div class="card-geo">📱 ${safe(r.telefono)} · ${safe(r.colonia)} · @${safe(r.lider_usuario)}</div>
+              </div>
+            </div>
+            <div class="card-badges">
+              <button type="button" class="ghost rec-ok" data-folio="${safe(r.folio)}" style="min-height:34px;font-size:12px;">↻ Recuperar</button>
+            </div>
+          </div>
+        `).join('');
+        cont.querySelectorAll('.rec-ok').forEach(b => {
+          b.onclick = () => {
+            API.cambiarEstadoSim({ folio: b.dataset.folio, estado: 'Activo' })
+              .then(() => { UI.toast('✓ Registro recuperado', 'success'); App.cargarPapelera(); })
+              .catch(e => UI.toast('Error: ' + e.message, 'error'));
+          };
+        });
+      },
+
+      async cargarPapelera() {
+        try { this._renderPapelera(await API.buscarSim({ estados: 'Inactivo', limit: 200, offset: 0 })); }
+        catch (e) { UI.toast('Error: ' + e.message, 'error'); }
+      },
+
+      async exportarCSV() {
+        try {
+          const out = await API.exportar({ estados: 'Activo', limit: 200, offset: 0 });
+          const blob = new Blob(['﻿' + out.csv], { type: 'text/csv;charset=utf-8' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'simpatizantes_' + new Date().toISOString().substring(0, 10) + '.csv';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          UI.toast('✓ CSV descargado (' + out.total + ' registros)', 'success');
+        } catch (e) {
+          UI.toast('Error: ' + e.message, 'error');
+        }
+      },
+
       async guardarSeguimiento(id) {
         const btn = document.getElementById('seg-guardar');
         const estatus = document.getElementById('seg-estatus').value;
@@ -822,6 +1602,7 @@
       },
 
       async modoEdicion() {
+        if (this.fichaTipo === 'sim') return this.modoEdicionSim();
         if (!this.currentId) return;
         const btn = document.getElementById('btn-editar');
         const fab = document.getElementById('fab-save');
@@ -1049,6 +1830,7 @@
       // --------- INACTIVAR / REACTIVAR ---------
 
       async confirmarInactivar() {
+        if (this.fichaTipo === 'sim') return this.confirmarInactivarSim();
         if (!this.currentId) return;
         // Leer nombre actual desde la ficha renderizada
         const fichaHTML = document.getElementById('ficha-contenido');
@@ -1128,6 +1910,21 @@
       },
 
       async reactivar() {
+        if (this.fichaTipo === 'sim') {
+          // Recuperar de papelera: solo admin (lo valida el backend)
+          UI.loading(document.getElementById('btn-reactivar'), true);
+          try {
+            await API.cambiarEstadoSim({ folio: this.currentFolio, estado: 'Activo' });
+            UI.toast('✓ Registro recuperado', 'success');
+            await this.verFichaSim(this.currentFolio);
+            this.buscar();
+          } catch (e) {
+            UI.toast('Error: ' + e.message, 'error');
+          } finally {
+            UI.loading(document.getElementById('btn-reactivar'), false);
+          }
+          return;
+        }
         if (!this.currentId) return;
         const id = this.currentId;
         const btn = document.getElementById('btn-reactivar');
@@ -1193,6 +1990,106 @@
         } finally {
           UI.loading(btn, false);
         }
+      },
+
+      // ============ CAPTURA DE SIMPATIZANTE ============
+      async guardarNuevoSim(e) {
+        e.preventDefault();
+        const consent = document.getElementById('ns-consent');
+        if (!consent.checked) {
+          UI.toast('El consentimiento de contacto es obligatorio para guardar.', 'error');
+          consent.focus();
+          return;
+        }
+        const nombre  = document.getElementById('ns-nombre').value.trim();
+        const telefono = document.getElementById('ns-telefono').value.trim();
+        const selCol  = document.getElementById('ns-colonia');
+        const otraVal = document.getElementById('ns-colonia-otra').value.trim();
+        const colonia = selCol.value === '__otra__' ? otraVal : selCol.value;
+        if (!nombre || !telefono || !colonia) {
+          UI.toast('Nombre, teléfono y colonia son obligatorios.', 'error');
+          return;
+        }
+        const secVal = document.getElementById('ns-seccion').value.trim();
+        const noConoce = document.getElementById('ns-no-conoce').checked;
+        if (secVal && !noConoce && !/^[0-9]{3,5}$/.test(secVal)) {
+          UI.toast('La sección electoral debe tener 3 a 5 dígitos, o marca "No la conoce".', 'error');
+          return;
+        }
+
+        const btn = e.target.querySelector('button[type=submit]');
+        UI.loading(btn, true);
+        UI.toast('Guardando...', 'persistent');
+        const datos = {
+          nombre: nombre,
+          telefono: telefono,
+          colonia: colonia,
+          seccion: noConoce ? '' : secVal,
+          no_conoce: noConoce,
+          observaciones: document.getElementById('ns-obs').value.trim(),
+          consentimiento: 'SI',
+          consentimiento_medio: document.getElementById('ns-consent-medio').value
+        };
+        try {
+          const out = await API.crearSim(datos);
+          document.querySelectorAll('.toast').forEach(t => t.remove());
+          if (out.duplicado) {
+            UI.toast('⚠ Posible duplicado: guardado para revisión de administración.', 'error');
+            this.mostrarPostSaveSim(out.folio, true);
+          } else {
+            UI.toast('✓ Simpatizante guardado (' + out.folio + ')', 'success');
+            this.mostrarPostSaveSim(out.folio, false);
+          }
+          this.buscar();
+        } catch (e2) {
+          document.querySelectorAll('.toast').forEach(t => t.remove());
+          UI.toast('Error: ' + e2.message, 'error');
+        } finally {
+          UI.loading(btn, false);
+        }
+      },
+
+      mostrarPostSaveSim(folio, duplicado) {
+        const form = document.getElementById('frm-nuevo-sim');
+        const prev = document.getElementById('post-save-box');
+        if (prev) prev.remove();
+
+        const box = document.createElement('div');
+        box.id = 'post-save-box';
+        box.className = 'ficha-section';
+        box.style.background = duplicado ? '#FFF4E0' : '#F2E4E8';
+        box.style.borderColor = 'var(--primary)';
+        box.innerHTML = duplicado ? `
+          <p style="margin-bottom:8px;color:var(--primary);font-weight:600;">
+            ⚠ Guardado como <b>posible duplicado</b> (folio ${folio})
+          </p>
+          <p style="font-size:13px;color:var(--muted);">
+            Ya existe un registro con ese teléfono. Administración lo revisará;
+            no se muestra en tu lista hasta entonces. No compartimos los datos del otro registro.
+          </p>
+          <div class="post-save">
+            <button type="button" class="ghost" id="ps-otro">Capturar otro</button>
+          </div>
+        ` : `
+          <p style="margin-bottom:8px;color:var(--primary);font-weight:600;">
+            ✓ Simpatizante guardado correctamente (${folio})
+          </p>
+          <div class="post-save">
+            <button type="button" id="ps-ver">Ver ficha</button>
+            <button type="button" class="ghost" id="ps-otro">Capturar otro</button>
+          </div>
+        `;
+        form.parentNode.insertBefore(box, form.nextSibling);
+
+        const ver = document.getElementById('ps-ver');
+        if (ver) ver.onclick = () => this.verFichaSim(folio);
+        document.getElementById('ps-otro').onclick = () => {
+          document.getElementById('frm-nuevo-sim').reset();
+          document.getElementById('ns-colonia-otra').style.display = 'none';
+          box.remove();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          document.getElementById('ns-nombre').focus();
+        };
       },
 
       mostrarPostSave(id) {

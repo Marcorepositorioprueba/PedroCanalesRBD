@@ -1,11 +1,12 @@
 // sw.js — service worker mínimo para PWA
 // Cachea el shell (HTML/CSS/JS) para que cargue aunque no haya red.
 // NO cachea llamadas a Apps Script (datos siempre frescos).
-const CACHE = 'pc-shell-v2'; // v2: localidades precargadas con municipio único
+const CACHE = 'pc-shell-v3'; // v3: V2 — simpatizantes, roles por líder, panel admin, aviso de privacidad
 const SHELL = [
   './',
   './index.html',
   './app.html',
+  './aviso-privacidad.html',
   './css/styles.css',
   './js/config.js',
   './js/ui.js',

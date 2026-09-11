@@ -1,37 +1,30 @@
 /**
- * api.js — capa de llamadas al backend Apps Script
- * El token se lee dinámicamente desde Auth en cada llamada (Auth debe existir antes de llamar)
+ * api.js — capa de llamadas al backend Apps Script (V2)
+ * Todo viaja por POST con el token en el body JSON (nunca en la query string),
+ * excepto `catalogos` y `ping` que son públicos.
  */
 const API = {
-  _req(action, payload, method) {
+  _req(action, payload, publico) {
     if (typeof API_URL === 'undefined' || !API_URL) {
       return Promise.reject(new Error('Falta API_URL en js/config.js'));
     }
-    const usePost = (method || 'GET') === 'POST';
     const body = Object.assign({}, payload || {});
 
     // Token: leer de Auth si existe (en login no hay sesión aún)
-    if (typeof Auth !== 'undefined' && Auth && typeof Auth.getToken === 'function') {
+    if (!publico && typeof Auth !== 'undefined' && Auth && typeof Auth.getToken === 'function') {
       const token = Auth.getToken();
       if (token) body.token = token;
     }
 
-    const qs = Object.keys(body)
-      .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(body[k]))
-      .join('&');
-    const url = API_URL + '?action=' + encodeURIComponent(action) + '&' + qs;
+    const url = API_URL + '?action=' + encodeURIComponent(action);
 
-    const opts = usePost
-      ? {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(body)
-        }
-      : { method: 'GET' };
+    console.log('[api]', 'POST', action);
 
-    console.log('[api]', method || 'GET', action);
-
-    return fetch(url, opts)
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request: sin pre-flight
+      body: JSON.stringify(body)
+    })
       .then(r => r.text())
       .then(text => {
         let j;
@@ -59,14 +52,36 @@ const API = {
       });
   },
 
-  login(usuario, password) {
-    return this._req('login', { usuario: usuario, password: password });
-  },
-  catalogos()              { return this._req('catalogos', {}); },
-  crear(datos)             { return this._req('crear', datos, 'POST'); },
+  // ---- Sesión ----
+  login(usuario, password) { return this._req('login', { usuario: usuario, password: password }); },
+  logout()                 { return this._req('logout', {}); },
+  catalogos()              { return this._req('catalogos', {}, true); },
+  quienSoy()               { return this._req('quien_soy', {}); },
+
+  // ---- Simpatizantes (ficha simple) ----
+  crearSim(datos)          { return this._req('crear_simpatizante', datos); },
+  buscarSim(filtros)       { return this._req('buscar_simpatizantes', filtros); },
+  obtenerSim(folio)        { return this._req('obtener_simpatizante', { folio: folio }); },
+  actualizarSim(datos)     { return this._req('actualizar_simpatizante', datos); },
+  cambiarEstadoSim(datos)  { return this._req('cambiar_estado_sim', datos); },
+  duplicadosListar()       { return this._req('duplicados_listar', {}); },
+  duplicadoResolver(datos) { return this._req('duplicado_resolver', datos); },
+
+  // ---- Usuarios (admin) ----
+  usuariosListar()         { return this._req('usuarios_listar', {}); },
+  usuarioCrear(datos)      { return this._req('usuario_crear', datos); },
+  usuarioPassword(datos)   { return this._req('usuario_password', datos); },
+  usuarioBloquear(datos)   { return this._req('usuario_bloquear', datos); },
+  cambiarPassword(datos)   { return this._req('cambiar_password', datos); },
+
+  // ---- Admin ----
+  exportar(filtros)        { return this._req('exportar', filtros); },
+  historial(filtros)       { return this._req('historial', filtros); },
+
+  // ---- Ficha líder/actor territorial (REGISTROS) ----
+  crear(datos)             { return this._req('crear', datos); },
   buscar(filtros)          { return this._req('buscar', filtros); },
   obtener(id)              { return this._req('obtener', { id: id }); },
-  seguimiento(datos)       { return this._req('seguimiento', datos, 'POST'); },
-  actualizar(datos)        { return this._req('actualizar', datos, 'POST'); },
-  quienSoy()               { return this._req('quien_soy', {}); }
+  seguimiento(datos)       { return this._req('seguimiento', datos); },
+  actualizar(datos)        { return this._req('actualizar', datos); }
 };

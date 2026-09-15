@@ -1,0 +1,41 @@
+================================================================================
+BITÁCORA DE CAMBIOS - RBD Pedro Canales
+Fecha: 2026-09-13
+Sesión: Optimización de Panel Admin y Flujo de Supervisión de Capturistas
+================================================================================
+
+OBJETIVO GENERAL
+----------------
+Corregir la visibilidad y el conteo de capturas para el rol de 'Capturista' en el Panel de Control del Administrador y optimizar la velocidad de carga del Dashboard.
+
+================================================================================
+CAMBIOS REALIZADOS
+================================================================================
+
+1. Backend (codigo.gs)
+------------------
+  • Optimización de Carga: Implementación de la función `_statsAdmin` para obtener todas las estadísticas de los operadores en una sola llamada al servidor, eliminando la lentitud del Dashboard.
+  • Normalización de Identidad: Corrección de filtros para que sean insensibles a mayúsculas, minúsculas y tildes en los nombres de usuario y encabezados de la hoja.
+  • Búsqueda Robusta: Modificación de `_buscarSim` y `_usuariosListar` para validar registros tanto por `lider_usuario` como por `creado_por`.
+
+2. Frontend (app.html & js/api.js)
+------------------------------
+  • Filtro de Rol: Actualización de `cargarAdminDashboard` para incluir el rol 'capturista' en la lista de operadores supervisables.
+  • Flujo de Detalle:
+    - Implementación de títulos dinámicos ("Detalle: [Nombre]") al supervisar capturistas.
+    - Corrección del filtrado en la vista de Inicio para mostrar TODOS los registros del capturista (incluyendo duplicados).
+    - Adición del botón "Panel de Control" en la navegación inferior para facilitar el regreso al Dashboard.
+  • Interfaz: Bloqueo de botones de captura cuando el Administrador está revisando detalles de un tercero.
+
+================================================================================
+PENDIENTES / PRÓXIMOS PASOS (Para mañana)
+================================================================================
+• REVISIÓN DE DUPLICADOS: Implementar/mejorar la lógica para identificar quién capturó cada registro duplicado, permitir la comparación entre ellos y generar el aviso correspondiente al operador para su corrección.
+• Validación final de la navegación Admin -> Detalle Capturista -> Panel de Control. (CORREGIDO: Se optimizó la visibilidad de botones y el flujo de retorno).
+• Verificación de estabilidad en la carga inicial (evitar el salto visual de roles). (CORREGIDO: Se eliminó la clase 'active' por defecto en sec-home).
+• IDENTIFICACIÓN EN DETALLE: Corregido el filtrado de estados en `App.buscar` para permitir la visualización de todos los registros (incluidos duplicados) al supervisar un operador.
+• UI CLEANUP: Ocultado el botón 'Admin' durante la vista de detalle de operador para priorizar el retorno al 'Panel de Control'.
+
+================================================================================
+FIN BITÁCORA 2026-09-13
+================================================================================

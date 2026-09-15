@@ -53,35 +53,38 @@ const API = {
   },
 
   // ---- Sesión ----
-  login(usuario, password) { return this._req('login', { usuario: usuario, password: password }); },
-  logout()                 { return this._req('logout', {}); },
-  catalogos()              { return this._req('catalogos', {}, true); },
-  quienSoy()               { return this._req('quien_soy', {}); },
+  login(usuario, password) { return API._req('login', { usuario: usuario, password: password }); },
+  logout()                 { return API._req('logout', {}); },
+  catalogos()              { return API._req('catalogos', {}, true); },
+  quienSoy()               { return API._req('quien_soy', {}); },
 
   // ---- Simpatizantes (ficha simple) ----
-  crearSim(datos)          { return this._req('crear_simpatizante', datos); },
-  buscarSim(filtros)       { return this._req('buscar_simpatizantes', filtros); },
-  obtenerSim(folio)        { return this._req('obtener_simpatizante', { folio: folio }); },
-  actualizarSim(datos)     { return this._req('actualizar_simpatizante', datos); },
-  cambiarEstadoSim(datos)  { return this._req('cambiar_estado_sim', datos); },
-  duplicadosListar()       { return this._req('duplicados_listar', {}); },
-  duplicadoResolver(datos) { return this._req('duplicado_resolver', datos); },
+  crearSim(datos)          { return API._req('crear_simpatizante', datos); },
+  buscarSim(filtros)       { return API._req('buscar_simpatizantes', filtros); },
+  obtenerSim(folio)        { return API._req('obtener_simpatizante', { folio: folio }); },
+  actualizarSim(datos)     { return API._req('actualizar_simpatizante', datos); },
+  cambiarEstadoSim(datos)  { return API._req('cambiar_estado_sim', datos); },
+  duplicadosListar()       { return API._req('duplicados_listar', {}); },
+  duplicadoResolver(datos) { return API._req('duplicado_resolver', datos); },
 
   // ---- Usuarios (admin) ----
-  usuariosListar()         { return this._req('usuarios_listar', {}); },
-  usuarioCrear(datos)      { return this._req('usuario_crear', datos); },
-  usuarioPassword(datos)   { return this._req('usuario_password', datos); },
-  usuarioBloquear(datos)   { return this._req('usuario_bloquear', datos); },
-  cambiarPassword(datos)   { return this._req('cambiar_password', datos); },
+  usuariosListar()         { return API._req('usuarios_listar', {}); },
+  usuarioCrear(datos)      { return API._req('usuario_crear', datos); },
+  usuarioPassword(datos)   { return API._req('usuario_password', datos); },
+  usuarioBloquear(datos)   { return API._req('usuario_bloquear', datos); },
+  resetContrasenasMasivo() { return API._req('reset_contrasenas_masivo', {}); },
+  cambiarPassword(datos)   { return API._req('cambiar_password', datos); },
+  statsAdmin()             { return API._req('stats_admin', {}); },
+  statsSecciones()         { return API._req('stats_secciones', {}); },
 
   // ---- Admin ----
-  exportar(filtros)        { return this._req('exportar', filtros); },
-  historial(filtros)       { return this._req('historial', filtros); },
+  exportar(filtros)        { return API._req('exportar', filtros); },
+  historial(filtros)       { return API._req('historial', filtros); },
 
   // ---- Ficha líder/actor territorial (REGISTROS) ----
-  crear(datos)             { return this._req('crear', datos); },
-  buscar(filtros)          { return this._req('buscar', filtros); },
-  obtener(id)              { return this._req('obtener', { id: id }); },
-  seguimiento(datos)       { return this._req('seguimiento', datos); },
-  actualizar(datos)        { return this._req('actualizar', datos); }
+  crear(datos)             { return API._req('crear', datos); },
+  buscar(filtros)          { return API._req('buscar', filtros); },
+  obtener(id)              { return API._req('obtener', { id: id }); },
+  seguimiento(datos)       { return API._req('seguimiento', datos); },
+  actualizar(datos)        { return API._req('actualizar', datos); }
 };

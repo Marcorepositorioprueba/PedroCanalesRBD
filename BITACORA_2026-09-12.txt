@@ -1,0 +1,56 @@
+================================================================================
+BITÁCORA DE CAMBIOS - RBD Pedro Canales
+Fecha: 2026-09-12
+Sesión: Profesionalización de Interfaz (Perfil y Gate de Privacidad)
+================================================================================
+
+OBJETIVO GENERAL
+----------------
+Elevar la calidad visual y profesional del panel de control, específicamente en el menú de perfil de usuario y el flujo de aceptación del aviso de privacidad.
+
+================================================================================
+ARCHIVOS MODIFICADOS
+================================================================================
+
+1. css/styles.css
+------------------
+  • Implementación de estilos para el Menú de Perfil Profesional:
+    - .hdr-profile-menu y .profile-btn: Botón con avatar en gradiente y efectos de hover.
+    - .profile-dropdown: Menú desplegable con sombra suave, animaciones de entrada y diseño estructurado.
+    - .dropdown-header y .dropdown-stats: Organización de información del usuario (Nombre, Rol, Última Conexión, Duración de Sesión).
+    - .dropdown-item: Estilos para opciones del menú, incluyendo el botón de salida con color de peligro.
+
+  • Implementación de estilos para el Gate de Aviso de Privacidad:
+    - .aviso-gate-card: Tarjeta centralizada con bordes redondeados y sombras profundas.
+    - .aviso-gate-header: Encabezado con gradiente morado profesional y logo PC.
+    - .aviso-gate-body: Cuerpo centrado con tipografía legible.
+    - .aviso-gate-check: Checkbox estilizado con fondo decorativo para confirmación obligatoria.
+    - .aviso-gate-footer: Botones de acción distribuidos en grid (Imprimir vs Aceptar).
+
+2. app.html
+------------
+  • Refactorización del método gateAvisoPrivacidad():
+    - Sustitución de la estructura HTML antigua por el nuevo diseño profesional (.aviso-gate-card).
+    - Actualización de IDs de control:
+      - btn-imprimir -> btn-imprimir-aviso-gate
+      - aviso-check-impreso -> chk-aviso-aceptado
+      - aviso-aceptar -> btn-aceptar-aviso-gate
+    - Aseguramiento de la lógica de bloqueo: El botón de ingreso permanece deshabilitado hasta que se marca la confirmación de impresión y lectura.
+
+================================================================================
+ESTADO ACTUAL Y VALIDACIÓN
+================================================================================
+• El menú de perfil ya posee la estructura visual necesaria para mostrar las métricas de sesión.
+• El flujo de entrada al sistema ahora presenta una interfaz formal y profesional que refuerza la obligatoriedad del aviso de privacidad.
+• La consistencia visual entre el login y la app se ha mantenido mediante el uso de la paleta morada Pedro Canales.
+
+================================================================================
+PENDIENTES / PRÓXIMOS PASOS
+================================================================================
+• Verificar la correcta carga de datos en el dropdown de perfil (Nombre, Rol, Last Login).
+• Implementar los endpoints de backend sugeridos en la bitácora anterior (stats_operador, stats_admin) para evitar la carga masiva de datos en el frontend.
+• PROCESO USUARIOS: El usuario está creando la lista de 105 capturistas en la hoja USUARIOS. Pendiente ejecutar el botón "Reset Contraseñas Masivo" y descargar el CSV de claves temporales.
+
+================================================================================
+FIN BITÁCORA 2026-09-12
+================================================================================

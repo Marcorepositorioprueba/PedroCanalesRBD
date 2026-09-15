@@ -9,40 +9,187 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="login-body">
-  <main class="login-card" style="max-width:640px;">
-    <div class="login-brand">
-      <div class="monogram">PC</div>
-      <div class="name">Aviso de Privacidad</div>
-      <div class="tagline">Vinculación Territorial · Pedro Canales</div>
+  <main class="login-card" style="max-width:720px; position: relative;">
+    <button type="button" class="btn-close-sheet" onclick="window.close()" title="Cerrar ventana">✕</button>
+    <div class="no-print" style="text-align:right;margin-bottom:16px;">
+      <button type="button" id="btn-imprimir-aviso" class="btn-primary-lg" style="width:auto;min-width:200px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5"/><path d="M18 18h2a2 2 0 0 0 2-2v-5"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+        <span>Imprimir / Guardar PDF</span>
+      </button>
     </div>
-    <div class="ficha-section" style="margin-top:16px;">
-      <p><b>Responsable del tratamiento.</b> El equipo de vinculación territorial de la campaña
-      Pedro Canales (El Independiente · Tulancingo de Bravo) es responsable del tratamiento
-      de los datos personales capturados en esta aplicación.</p>
-      <p><b>Datos que se recaban.</b> Nombre completo, teléfono/WhatsApp, colonia o localidad,
-      sección electoral (si la persona la conoce) y observaciones voluntarias.</p>
-      <p><b>Finalidad.</b> Registrar y dar seguimiento al contacto con simpatizantes y personas
-      vinculadas al proyecto, exclusivamente para fines de organización ciudadana y comunicación
-      del equipo. <b>La persona registrada debe manifestar su consentimiento para ser contactada</b>;
-      dicho consentimiento queda registrado con fecha y medio.</p>
-      <p><b>Acceso a la información.</b> Solo el líder que registró a la persona y la administración
-      del sistema pueden consultar cada registro. El acceso está protegido por cuentas de usuario
-      individuales con contraseña.</p>
-      <p><b>Derechos ARCO.</b> Toda persona registrada puede solicitar el acceso, rectificación,
-      cancelación u oposición respecto de sus datos personales a través del responsable del
-      sistema, o pidiendo que su registro sea desactivado.</p>
-      <p><b>Conservación.</b> Los registros inactivos se conservan en papelera interna de
-      administración y pueden recuperarse para fines de auditoría.</p>
-      <p><b>Contacto.</b> Para cualquier duda sobre este aviso o sobre el tratamiento de sus
-      datos, contacte al equipo de vinculación territorial de Pedro Canales.</p>
-      <p style="color:var(--muted);font-size:12px;margin-top:12px;">
-        Última actualización: septiembre 2026 · Documento interno de trabajo
-      </p>
-    </div>
-    <div class="post-save" style="margin-top:16px;">
-      <button type="button" class="ghost" onclick="window.close()" style="min-height:44px;">Cerrar</button>
+
+    <article class="carta-formal" aria-label="Aviso de Privacidad - Versión para impresión">
+      <!-- MEMBRETE -->
+      <header class="carta-membrete">
+        <div class="logo">PC</div>
+        <h1>AVISO DE PRIVACIDAD</h1>
+        <p class="membrete-sub">Registro Básico de Datos — Vinculación Territorial</p>
+        <p class="membrete-sub">Pedro Canales · El Independiente · Tulancingo de Bravo, Hidalgo</p>
+        <div class="folio-fecha" id="folio-fecha"></div>
+      </header>
+
+      <!-- CUERPO CON NUMERACIÓN ROMANA -->
+      <div class="carta-cuerpo">
+        <section>
+          <h2>I. RESPONSABLE DEL TRATAMIENTO</h2>
+          <p>El equipo de vinculación territorial de la campaña <strong>Pedro Canales (El Independiente · Tulancingo de Bravo)</strong> es responsable del tratamiento de los datos personales capturados en esta aplicación. El responsable garantiza el cumplimiento de los principios de licitud, consentimiento, información, calidad, finalidad, lealtad, proporcionalidad y responsabilidad establecidos en la normativa aplicable.</p>
+        </section>
+
+        <section>
+          <h2>II. DATOS PERSONALES QUE SE RECABAN</h2>
+          <p>Para las finalidades señaladas en el presente aviso, se recaban las siguientes categorías de datos personales:</p>
+          <ul>
+            <li><strong>Datos de identificación:</strong> Nombre completo.</li>
+            <li><strong>Datos de contacto:</strong> Teléfono móvil / WhatsApp.</li>
+            <li><strong>Datos de ubicación:</strong> Colonia, localidad, municipio y, de forma opcional, sección electoral.</li>
+            <li><strong>Datos de clasificación:</strong> Perfil, organización, tipo de vinculación, prioridad y estatus (solo para actores territoriales).</li>
+            <li><strong>Datos de seguimiento:</strong> Observaciones, problemas públicos identificados, próximo paso, fecha de seguimiento.</li>
+            <li><strong>Datos de consentimiento:</strong> Manifestación de voluntad para ser contactado, medio del consentimiento (por la app, verbal, escrito) y fecha.</li>
+          </ul>
+          <p>No se recaban datos personales sensibles, patrimoniales ni financieros.</p>
+        </section>
+
+        <section>
+          <h2>III. FINALIDAD DEL TRATAMIENTO</h2>
+          <p>Los datos personales se tratan exclusivamente para:</p>
+          <ol>
+            <li>Registrar y dar seguimiento al contacto con simpatizantes y personas vinculadas al proyecto.</li>
+            <li>Organizar la comunicación ciudadana del equipo de vinculación territorial.</li>
+            <li>Generar reportes internos de avance y cobertura territorial.</li>
+            <li>Facilitar el ejercicio de derechos ARCO por parte de los titulares.</li>
+          </ol>
+          <p><strong>La persona registrada debe manifestar su consentimiento libre, informado, expreso y por escrito (o medios equivalentes) para ser contactada;</strong> dicho consentimiento queda registrado con fecha, medio y usuario que lo capturó.</p>
+        </section>
+
+        <section>
+          <h2>IV. ACCESO A LA INFORMACIÓN</h2>
+          <p>El acceso a los datos está restringido bajo el siguiente esquema:</p>
+          <ul>
+            <li><strong>Líder / Capturista:</strong> Solo puede consultar, editar e inactivar los registros que <em>él mismo</em> capturó (identificados por su <code>lider_usuario</code>).</li>
+            <li><strong>Administrador:</strong> Acceso global a todos los registros, panel de control, gestión de usuarios, duplicados, papelera y exportación.</li>
+          </ul>
+          <p>El acceso está protegido por cuentas de usuario individuales con contraseña y token de sesión (32 caracteres hexadecimales). Las sesiones se validan en cada petición al backend.</p>
+        </section>
+
+        <section>
+          <h2>V. TRANSFERENCIAS</h2>
+          <p>No se realizan transferencias de datos personales a terceros, salvo:</p>
+          <ul>
+            <li>Requerimiento legal fundado y motivado de autoridad competente.</li>
+            <li>Consentimiento expreso del titular para un fin específico distinto al presente aviso.</li>
+          </ul>
+        </section>
+        <div class="page-break"></div>
+        <section>
+          <h2>VI. DERECHOS ARCO (ACCESO, RECTIFICACIÓN, CANCELACIÓN Y OPOSICIÓN)</h2>
+          <p>Toda persona registrada puede solicitar, en cualquier momento:</p>
+          <ul>
+            <li><strong>Acceso:</strong> Conocer qué datos suyos se tratan y para qué fines.</li>
+            <li><strong>Rectificación:</strong> Corregir datos inexactos o incompletos.</li>
+            <li><strong>Cancelación:</strong> Solicitar la supresión de sus datos cuando ya no sean necesarios.</li>
+            <li><strong>Oposición:</strong> Oponerse al tratamiento para fines específicos.</li>
+          </ul>
+          <p>El ejercicio de derechos se realiza contactando al responsable del sistema (equipo de vinculación territorial de Pedro Canales) o solicitando que su registro sea desactivado (papelera interna, recuperable para auditoría).</p>
+        </section>
+
+        <section>
+          <h2>VII. CONSERVACIÓN Y ELIMINACIÓN</h2>
+          <p>Los registros activos se conservan mientras dure la finalidad del tratamiento. Los registros inactivados (estatus <em>Inactivo</em>) pasan a una <strong>papelera interna de administración</strong> donde se conservan para fines de auditoría y pueden ser recuperados por un administrador. La eliminación física definitiva requiere autorización expresa del responsable y deja constancia en bitácora.</p>
+        </section>
+
+        <section>
+          <h2>VIII. MEDIDAS DE SEGURIDAD</h2>
+          <p>Se implementan medidas administrativas, técnicas y físicas razonables para proteger los datos contra daño, pérdida, alteración, destrucción o uso, acceso o tratamiento no autorizado:</p>
+          <ul>
+            <li>Autenticación por token único por sesión (backend Google Apps Script).</li>
+            <li>Validación de rol en cada operación (lider/admin).</li>
+            <li>Registro de historial de cambios (auditoría) por registro.</li>
+            <li>Comunicación exclusivamente HTTPS (TLS 1.2+).</li>
+            <li>Service Worker para funcionamiento offline con sincronización posterior.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>IX. CAMBIOS AL PRESENTE AVISO</h2>
+          <p>El responsable se reserva el derecho de modificar el presente aviso. Cualquier cambio sustancial se notificará a través de la aplicación y se solicitará nueva aceptación si la normativa así lo exige. La versión vigente siempre estará disponible en <code>aviso-privacidad.html</code>.</p>
+        </section>
+
+        <section>
+          <h2>X. CONTACTO</h2>
+          <p>Para cualquier duda, ejercicio de derechos o solicitud relacionada con el tratamiento de sus datos personales, contacte al:</p>
+          <p><strong>Equipo de Vinculación Territorial — Pedro Canales</strong><br>
+          Tulancingo de Bravo, Hidalgo<br>
+          <em>Documento interno de trabajo — Septiembre 2026</em></p>
+        </section>
+      </div>
+
+      <!-- BLOQUE DE FIRMA -->
+      <footer class="carta-firma">
+        <p class="firma-intro">Al firmar, el titular manifiesta haber leído, entendido y aceptado el presente Aviso de Privacidad, y autoriza el tratamiento de sus datos personales en los términos aquí descritos.</p>
+
+        <div class="firma-campos">
+          <div class="firma-grupo">
+            <div class="linea" id="linea-nombre"></div>
+            <label>NOMBRE COMPLETO (LETRA DE MOLDE)</label>
+          </div>
+          <div class="firma-grupo">
+            <div class="linea" id="linea-firma"></div>
+            <label>FIRMA</label>
+          </div>
+          <div class="firma-grupo">
+            <div class="linea" id="linea-fecha"></div>
+            <label>FECHA (DD/MM/AAAA)</label>
+          </div>
+          <div class="firma-grupo">
+            <div class="linea" id="linea-huella"></div>
+            <label>HUELLA DIGITAL (PULGAR DERECHO) — OPCIONAL</label>
+          </div>
+        </div>
+
+        <div class="firma-testigo">
+          <div class="linea" id="linea-testigo"></div>
+          <label>NOMBRE Y FIRMA DEL TESTIGO / CAPTURISTA</label>
+        </div>
+      </footer>
+
+      <div class="carta-pie">
+        <p>— Fin del documento —</p>
+        <p><strong>Folio:</strong> <span id="folio-documento"></span> &nbsp; | &nbsp; <strong>Versión:</strong> Septiembre 2026</p>
+      </div>
+    </article>
+
+    <div class="no-print post-save" style="margin-top:16px;">
+      <button type="button" class="ghost" onclick="window.close()" style="min-height:44px;">Cerrar ventana</button>
       <button type="button" class="ghost" onclick="location.href='index.html'" style="min-height:44px;">Ir a iniciar sesión</button>
     </div>
   </main>
+
+  <script>
+    // Generar folio y fecha automáticos
+    (function() {
+      const ahora = new Date();
+      const folio = 'AP-' + ahora.getFullYear() + String(ahora.getMonth()+1).padStart(2,'0') + String(ahora.getDate()).padStart(2,'0') + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+      const fechaFormateada = ahora.toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' });
+      const fechaCorta = ahora.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      document.getElementById('folio-fecha').textContent = 'Folio: ' + folio + '  |  Fecha: ' + fechaFormateada;
+      document.getElementById('folio-documento').textContent = folio;
+      document.getElementById('linea-fecha').setAttribute('data-fecha', fechaCorta);
+      // Placeholder visual para la línea de fecha
+      document.getElementById('linea-fecha').title = 'Escribir: ' + fechaCorta;
+    })();
+
+    // Botón imprimir
+    document.getElementById('btn-imprimir-aviso').addEventListener('click', () => window.print());
+
+    // Si viene de index.html con ?print=1, auto-imprimir
+    (function() {
+      const params = new URLSearchParams(location.search);
+      if (params.get('print') === '1') {
+        // Pequeño delay para que renderice fuentes
+        setTimeout(() => window.print(), 300);
+      }
+    })();
+  </script>
 </body>
 </html>

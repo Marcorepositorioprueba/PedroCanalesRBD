@@ -74,7 +74,7 @@ function _validarToken(token) {
         return {
           token: String(token),
           usuario: String(data[i][iUsr]),
-          rol: String(data[i][iRol] || 'operador'),
+          rol: String(data[i][iRol] || 'capturista').toLowerCase(),
           nombre: String(data[i][iNom] || data[i][iUsr]),
           lider_id: String(data[i][iLid] || '')
         };
@@ -232,7 +232,7 @@ function _login(payload) {
   }
   const ses = {
     usuario: String(u.usuario),
-    rol: String(u.rol || 'operador'),
+    rol: String(u.rol || 'capturista').toLowerCase(),
     nombre: String(u.nombre || u.usuario),
     lider_id: String(u.lider_id || '')
   };
@@ -271,7 +271,7 @@ function _catalogos() {
 const SIM_EDITABLES = ['nombre','telefono','colonia','seccion','observaciones'];
 
 function _crearSim(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const req = ['nombre', 'telefono', 'colonia'];
   req.forEach(k => { if (!String(payload[k] || '').trim()) throw new Error('Falta campo requerido: ' + k); });
   if (String(payload.consentimiento || '') !== 'SI') {
@@ -326,7 +326,7 @@ function _crearSim(payload, ses) {
 }
 
 function _buscarSim(payload, ses) {
-  _exigir(ses, ['admin', 'lider', 'operador']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const q       = String(payload.q || '').toLowerCase().trim();
   const colonia = String(payload.colonia || '').trim();
   const seccion = String(payload.seccion || '').trim();
@@ -338,7 +338,7 @@ function _buscarSim(payload, ses) {
   let sims = _rowsToObjects(_sh('SIMPATIZANTES')).reverse(); // más recientes primero
   if (!_esAdmin(ses)) {
     // Líder: SOLO lo suyo, y nunca ve duplicados pendientes (eso es de admin)
-    sims = sims.filter(s => String(s.lider_usuario || '') === String(ses.usuario));
+    sims = sims.filter(s => (String(s.lider_usuario || '').toLowerCase() === String(ses.usuario).toLowerCase() || String(s.creado_por || '').toLowerCase() === String(ses.usuario).toLowerCase()));
     sims = sims.filter(s => String(s.estado || '') !== 'Posible duplicado');
   }
   sims = sims.filter(s => {
@@ -352,7 +352,7 @@ function _buscarSim(payload, ses) {
       const ss_ = String(s.seccion || '');
       if (seccion === 'NO_CONOCE' ? ss_ !== 'NO_CONOCE' : ss_ !== seccion) return false;
     }
-    if (_esAdmin(ses) && liderF && String(s.lider_usuario || '') !== liderF) return false;
+    if (_esAdmin(ses) && liderF && String(s.lider_usuario || '').toLowerCase() !== liderF.toLowerCase() && String(s.creado_por || '').toLowerCase() !== liderF.toLowerCase()) return false;
     return true;
   });
 
@@ -360,14 +360,14 @@ function _buscarSim(payload, ses) {
 }
 
 function _obtenerSim(payload, ses) {
-  _exigir(ses, ['admin', 'lider', 'operador']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const folio = String(payload.folio || '').trim();
   if (!folio) throw new Error('Falta folio');
 
   const sims = _rowsToObjects(_sh('SIMPATIZANTES'));
   const sim = sims.find(s => String(s.folio || '').trim() === folio);
   if (!sim) throw new Error('Simpatizante no encontrado');
-  if (!_esAdmin(ses) && String(sim.lider_usuario || '') !== String(ses.usuario)) {
+  if (!_esAdmin(ses) && String(sim.lider_usuario || '').toLowerCase() !== String(ses.usuario).toLowerCase() && String(sim.creado_por || '').toLowerCase() !== String(ses.usuario).toLowerCase()) {
     throw new Error('No autorizado'); // aislamiento entre líderes
   }
   if (!_esAdmin(ses) && String(sim.estado || '') === 'Posible duplicado') {
@@ -384,7 +384,7 @@ function _obtenerSim(payload, ses) {
 }
 
 function _actualizarSim(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const folio = String(payload.folio || '').trim();
   if (!folio) throw new Error('Falta folio');
 
@@ -394,7 +394,7 @@ function _actualizarSim(payload, ses) {
   const iFol = headers.indexOf('folio');
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][iFol]).trim() === folio) {
-      if (!_esAdmin(ses) && String(data[i][headers.indexOf('lider_usuario')]) !== String(ses.usuario)) {
+      if (!_esAdmin(ses) && String(data[i][headers.indexOf('lider_usuario')]) !== String(ses.usuario) && String(data[i][headers.indexOf('creado_por')]) !== String(ses.usuario)) {
         throw new Error('No autorizado');
       }
       // Si cambia el teléfono, revalidar formato (no re-cheque duplicados: admin lo resuelve)
@@ -407,7 +407,7 @@ function _actualizarSim(payload, ses) {
 }
 
 function _cambiarEstadoSim(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const folio = String(payload.folio || '').trim();
   const nuevo = String(payload.estado || '').trim();
   if (!folio || ['Activo', 'Inactivo'].indexOf(nuevo) === -1) {
@@ -420,7 +420,7 @@ function _cambiarEstadoSim(payload, ses) {
   const iFol = headers.indexOf('folio'), iEst = headers.indexOf('estado');
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][iFol]).trim() === folio) {
-      const esDueno = String(data[i][headers.indexOf('lider_usuario')]) === String(ses.usuario);
+      const esDueno = String(data[i][headers.indexOf('lider_usuario')]) === String(ses.usuario) || String(data[i][headers.indexOf('creado_por')]) === String(ses.usuario);
       if (!_esAdmin(ses) && !esDueno) throw new Error('No autorizado');
       // Líder puede inactivar lo suyo; reactivar/recuperar SOLO admin
       if (!_esAdmin(ses) && nuevo === 'Activo' && String(data[i][iEst]) === 'Inactivo') {
@@ -483,7 +483,7 @@ function _usuariosListar(ses) {
     activo: u.activo === true,
     lider_id: String(u.lider_id || ''),
     created_at: u.created_at,
-    simpatizantes: sims.filter(s => String(s.lider_usuario) === String(u.usuario) && String(s.estado) !== 'Inactivo').length
+    simpatizantes: sims.filter(s => (String(s.lider_usuario || '').toLowerCase() === String(u.usuario).toLowerCase() || String(s.creado_por || '').toLowerCase() === String(u.usuario).toLowerCase()) && String(s.estado) !== 'Inactivo').length
   }));
 }
 
@@ -495,7 +495,7 @@ function _usuarioCrear(payload, ses) {
   const pwd     = String(payload.password || '');
   if (!usuario || !nombre || !pwd) throw new Error('Falta usuario, nombre o contraseña');
   if (pwd.length < 8) throw new Error('La contraseña debe tener al menos 8 caracteres');
-  if (['lider', 'admin', 'operador'].indexOf(rol) === -1) throw new Error('Rol inválido');
+  if (['lider', 'admin', 'capturista'].indexOf(rol) === -1) throw new Error('Rol inválido');
   if (_usuarioPorNombre(usuario)) throw new Error('El usuario ya existe');
 
   const sh = _sh('USUARIOS');
@@ -569,8 +569,42 @@ function _usuarioBloquear(payload, ses) {
   throw new Error('Usuario no encontrado');
 }
 
+function _resetContrasenasMasivo(ses) {
+  _exigirAdmin(ses);
+  const sh = _sh('USUARIOS');
+  const data = sh.getDataRange().getValues();
+  const headers = data[0];
+  const iUsr = headers.indexOf('usuario');
+  const iRol = headers.indexOf('rol');
+  const iHash = headers.indexOf('password_hash');
+
+  const resultados = [];
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$';
+
+  for (let i = 1; i < data.length; i++) {
+    const rol = String(data[i][iRol] || '');
+    if (rol === 'admin') continue; // No resetear el admin
+
+    const usuario = String(data[i][iUsr] || '');
+
+    // Generar clave aleatoria de 10 caracteres
+    let pwd = '';
+    for (let j = 0; j < 10; j++) {
+      pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    // Actualizar en la hoja (hashed)
+    sh.getRange(i + 1, iHash + 1).setValue(_hash(pwd));
+
+    resultados.push({ usuario: usuario, password: pwd });
+    _registrarHistorial('USUARIO', usuario, 'reset_masivo', [['password_hash', '***', '***']], ses.usuario);
+  }
+
+  return resultados;
+}
+
 function _cambiarPassword(payload, ses) {
-  _exigir(ses, ['admin', 'lider', 'operador']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const actual = String(payload.password_actual || '');
   const nueva  = String(payload.password_nueva || '');
   if (nueva.length < 8) throw new Error('La nueva contraseña debe tener al menos 8 caracteres');
@@ -589,6 +623,70 @@ function _cambiarPassword(payload, ses) {
     }
   }
   throw new Error('Usuario no encontrado');
+}
+
+// ===== STATS ADMIN (optimizado) =====
+function _statsAdmin(ses) {
+  _exigirAdmin(ses);
+  const sims = _rowsToObjects(_sh('SIMPATIZANTES'));
+  const usuarios = _usuariosRows();
+
+  const stats = usuarios.map(u => {
+    const uLow = String(u.usuario).toLowerCase();
+    const misSims = sims.filter(s =>
+      (String(s.lider_usuario || '').toLowerCase() === uLow || String(s.creado_por || '').toLowerCase() === uLow)
+      && String(s.estado || '') !== 'Inactivo'
+    );
+
+    const total = misSims.length;
+    let conTel = 0, conSec = 0, conObs = 0, conConsEsc = 0;
+
+    misSims.forEach(r => {
+      const tel = String(r.telefono || '').replace(/\D/g, '');
+      if (tel.length === 10) conTel++;
+      if (r.seccion && String(r.seccion) !== 'NO_CONOCE') conSec++;
+      if (r.observaciones && r.observaciones.trim()) conObs++;
+      if (String(r.consentimiento_medio || '').toLowerCase() === 'escrito') conConsEsc++;
+    });
+
+    const calidadPromedio = total ? ((conTel + conSec + conObs + conConsEsc) / (total * 4)) * 100 : 0;
+    let calidadNivel = 'baja';
+    if (calidadPromedio >= 75) calidadNivel = 'alta';
+    else if (calidadPromedio >= 50) calidadNivel = 'media';
+
+    let ultimaCaptura = null;
+    if (misSims.length > 0) {
+      const fechas = misSims.map(s => new Date(s.fecha_creacion)).filter(d => !isNaN(d));
+      if (fechas.length > 0) ultimaCaptura = new Date(Math.max(...fechas));
+    }
+
+    return {
+      usuario: u.usuario,
+      nombre: u.nombre || u.usuario,
+      rol: u.rol,
+      total,
+      calidadPromedio,
+      calidadNivel,
+      ultimaCaptura: ultimaCaptura ? ultimaCaptura.toISOString() : null,
+      cumpleMeta: total >= 50
+    };
+  }).filter(s => ['lider', 'operador', 'capturista'].includes(String(s.rol).toLowerCase()));
+
+  return stats;
+}
+
+function _statsPorSeccion(ses) {
+  _exigirAdmin(ses);
+  const sims = _rowsToObjects(_sh('SIMPATIZANTES'));
+  const counts = {};
+  sims.forEach(s => {
+    if (String(s.estado || '') !== 'Inactivo') {
+      const sec = String(s.seccion || 'Sin sección').trim();
+      counts[sec] = (counts[sec] || 0) + 1;
+    }
+  });
+  return Object.entries(counts).map(([seccion, total]) => ({ seccion, total }))
+    .sort((a, b) => b.total - a.total);
 }
 
 // ===== EXPORTAR CSV (admin) =====
@@ -634,7 +732,7 @@ function _borrarDatosDemo(ses, payload) {
 // ===== REGISTROS (ficha de líder / actor territorial) =======
 // ============================================================
 function _crear(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const req = ['municipio', 'nombre', 'problemas_identificados'];
   req.forEach(k => { if (!payload[k]) throw new Error('Falta campo requerido: ' + k); });
 
@@ -668,7 +766,7 @@ function _crear(payload, ses) {
 }
 
 function _buscar(payload, ses) {
-  _exigir(ses, ['admin', 'lider', 'operador']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const q      = String(payload.q || '').toLowerCase().trim();
   const mun    = String(payload.municipio || '').trim();
   const loc    = String(payload.localidad || '').trim();
@@ -704,7 +802,7 @@ function _buscar(payload, ses) {
 }
 
 function _obtener(payload, ses) {
-  _exigir(ses, ['admin', 'lider', 'operador']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const id = parseInt(payload.id || '0', 10);
   if (!id) throw new Error('Falta id');
 
@@ -730,7 +828,7 @@ function _obtener(payload, ses) {
 }
 
 function _seguimiento(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const id = parseInt(payload.registro_id || '0', 10);
   if (!id) throw new Error('Falta registro_id');
 
@@ -773,7 +871,7 @@ function _seguimiento(payload, ses) {
 }
 
 function _actualizar(payload, ses) {
-  _exigir(ses, ['admin', 'lider']);
+  _exigir(ses, ['admin', 'lider', 'capturista']);
   const id = parseInt(payload.id || '0', 10);
   if (!id) throw new Error('Falta id');
 
@@ -826,7 +924,10 @@ function _routing(action, payload, ses, token) {
     case 'usuario_crear':    return _usuarioCrear(payload, ses);
     case 'usuario_password': return _usuarioPassword(payload, ses);
     case 'usuario_bloquear': return _usuarioBloquear(payload, ses);
+    case 'reset_contrasenas_masivo': return _resetContrasenasMasivo(ses);
     case 'cambiar_password': return _cambiarPassword(payload, ses);
+    case 'stats_admin': return _statsAdmin(ses);
+    case 'stats_secciones': return _statsPorSeccion(ses);
     // ---- Admin ----
     case 'exportar':         return _exportar(payload, ses);
     case 'historial':        return _historial(payload, ses);

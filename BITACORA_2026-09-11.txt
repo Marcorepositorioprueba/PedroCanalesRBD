@@ -1,0 +1,315 @@
+================================================================================
+BITÁCORA DE CAMBIOS - RBD Pedro Canales
+Fecha: 2026-09-11
+Sesión: Implementación Vistas Operador/Admin + Aviso Privacidad Formal
+================================================================================
+
+OBJETIVO GENERAL
+----------------
+Transformar la app actual (una sola vista Home/Buscar/Nuevo/Ficha/Admin) en una
+arquitectura de DOS VISTAS DIFERENCIADAS POR ROL:
+  1. OPERADOR (capturista de campo): Dashboard personal, meta 50, solo sus registros
+  2. ADMIN: Dashboard ejecutivo con gráficos, selector de operador, indicadores calidad
+
+Además: Reforzar el Aviso de Privacidad con versión "carta formal" para impresión
+y gate obligatorio de aceptación + impresión.
+
+================================================================================
+ARCHIVOS MODIFICADOS
+================================================================================
+
+1. aviso-privacidad.html  (REESCRITO COMPLETO)
+----------------------------------------------
+ANTES: HTML simple con párrafos, botones Cerrar/Volver a login
+AHORA: Estructura semántica "carta formal" lista para imprimir/firmar
+
+  • <article class="carta-formal"> con:
+    - Header membrete: Logo PC, "AVISO DE PRIVACIDAD", subtítulos, folio/fecha auto
+    - Cuerpo 10 secciones (I-X) numeración romana:
+        I. Responsable del Tratamiento
+        II. Datos Personales que se Recaban (6 categorías, lista)
+        III. Finalidad (4 ítems + consentimiento obligatorio)
+        IV. Acceso a la Información (esquema líder/admin)
+        V. Transferencias (solo legal/consentimiento)
+        VI. Derechos ARCO (4 derechos + ejercicio)
+        VII. Conservación y Eliminación (papelera auditoría)
+        VIII. Medidas de Seguridad (5 medidas técnicas)
+        IX. Cambios al Aviso (versionado)
+        X. Contacto
+    - Footer firma: 4 líneas (Nombre, Firma, Fecha, Huella opcional) + testigo
+    - Pie: Folio, versión, página
+
+  • CSS @media print (en styles.css):
+    @page { margin: 2.5cm; size: A4; }
+    Tipografía Georgia/Playfair, 11pt, interlineado 1.6, justificado
+    Oculta .no-print (botones, nav), muestra solo .carta-formal
+    Saltos de página controlados
+
+  • JS: Genera folio aleatorio "AP-YYYYMMDD-XXXXXX", fecha formateada ES
+  • Botón "Imprimir / Guardar PDF" → window.print()
+  • Auto-print si URL trae ?print=1 (para gate)
+
+2. app.html  (CAMBIOS MAYORES)
+------------------------------
+HEAD:
+  + <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    (Chart.js vía CDN, cacheado por Service Worker)
+
+NUEVAS SECCIONES (<section class="section">):
+
+  A) #sec-operador  → Dashboard capturista
+     - Header .operador-header (grid 2 col):
+         .meta-card: h2 "Tu avance" + .progress-ring (SVG anillo 100px, stroke-dasharray 264)
+                        <b id="op-contador">0</b> / 50
+                        p.meta-sub "Mínimo obligatorio: 50 simpatizantes"
+         .streak-card: 🔥 + <b id="op-racha">0</b> días seguidos
+     - Quick-actions (3 tabs data-go-op):
+         capturar | mis-registros | calidad
+     - Paneles .op-panel (solo uno .active a la vez):
+         #op-capturar: Formulario simpatizante simplificado (id frm-nuevo-sim-op)
+         #op-mis-registros: Search bar #op-q + #op-resultados (cards card-sim)
+         #op-calidad: .quality-grid #op-quality-grid (4 items con barra %)
+
+  B) #sec-admin-dashboard  → Panel ejecutivo
+     - Header .admin-dash-header: h2 + selector #admin-user-select
+     - .kpi-grid (4 cards): Operadores, Capturas, Promedio, Cumplen meta
+     - .charts-row (2 col):
+         #chart-barras-operadores (bar horizontal)
+         #chart-calidad (doughnut)
+     - .chart-card.full-width: #chart-tendencia (line 14 días)
+     - .tabla-operadores: tabla con badge-calidad + btn-ver-detalle
+
+BOTTOM-NAV REDESIGNADO (role-aware):
+  IDs únicos por botón, display:none/block según rol en init():
+    - Admin: ve Home/Nuevo/Buscar/Ficha/Admin + Dashboard
+    - Operador: ve Capturar/Mis reg./Calidad (oculta Home/Nuevo/Buscar/Ficha/Admin)
+    - Fallback: ve Home/Nuevo/Buscar/Ficha/Admin (rol desconocido)
+
+LÓGICA APP (const App = {...}) - NUEVOS MÉTODOS Y PROPIEDADES:
+
+  Props añadidas:
+    currentFolio: null,        // para ficha simpatizante
+    currentOpTab: 'capturar',  // tab activo operador
+
+  Métodos NUEVOS:
+    • initOperador()           → puebla colonias, carga stats + registros
+    • cargarEstadisticasOperador()
+        - API.buscarSim({lider: usuario, estados:'Activo', limit:1000})
+        - Actualiza contador, anillo SVG (progressRing), racha, grid calidad
+    • calcularRacha(registros) → agrupa por fecha, cuenta días consecutivos desde hoy
+    • renderQualityGrid(registros) → 4 items: teléfono, sección, obs, consentimiento escrito
+    • cambiarTabOperador(tab)  → toggles .active en [data-go-op] y .op-panel
+    • guardarNuevoSimOp(e)     → POST crearSim + toast + reset + recarga stats
+    • buscarMisRegistros()     → filtrado por lider + q, render cards card-sim
+    • initAdminDashboard()     → wrapper
+    • cargarAdminDashboard()
+        - API.usuariosListar() → filtra rol lider/operador → pobla selector
+        - Para cada operador: API.buscarSim({lider, limit:1000}) → calcula:
+            total, calidadPromedio (4 criterios / 4), calidadNivel (alta≥75%, media≥50%, baja),
+            ultimaCaptura, cumpleMeta (total≥50)
+        - Filtra por selector (__all__ o usuario)
+        - Llama renderAdminDashboard()
+    • renderAdminDashboard(statsFiltrados, statsTodos, usuarioSel)
+        - Actualiza 4 KPIs
+        - renderChartBarrasOperadores() → barras horizontales coloreadas por total
+        - renderChartCalidad() → doughnut Alta/Media/Baja
+        - renderChartTendencia() → línea 14 días (placeholder random por ahora)
+        - renderTablaOperadores() → tabla con badges + btn-ver-detalle
+          (click → setea selector + go('home') + filtra f-lider)
+    • renderChartBarrasOperadores(), renderChartCalidad(), renderChartTendencia(),
+      renderTablaOperadores() → usan UI.renderChart()
+
+  MODIFICADOS:
+    • init() → detecta rol con Auth.esAdmin() / Auth.esCapturista()
+               navega: admin → admin-dashboard, operador → operador, else → home
+    • go(seccion) → maneja active states bottom-nav + quick-actions + [data-go-op]
+                    títulos actualizados para operador/admin-dashboard
+    • cargarCatalogo() → puebla #ns-colonia-op (form operador) igual que #ns-colonia
+
+3. css/styles.css  (ESTILOS NUEVOS AL FINAL)
+---------------------------------------------
+  • @media print para .carta-formal (aviso-privacidad.html)
+  • .operador-header, .meta-card, .streak-card, .progress-ring, .ring-svg,
+    .ring-bg, .ring-prog, .ring-text, .meta-sub, .streak-icon
+  • .qa-btn[data-go-op].active (verde success)
+  • .op-panel (display:none/active)
+  • .quality-grid, .quality-item, .qi-icon, .qi-value, .qi-label, .qi-bar,
+    .qi-bar-inner, .quality-item.alta/media/baja
+  • .admin-dash-header, .selector-usuario-wrap, .kpi-grid, .kpi-card, .kpi-icon
+  • .charts-row, .chart-card, .chart-card.full-width
+  • .tabla-operadores, .table-wrap, .badge-calidad.alta/media/baja
+  • .btn-ver-detalle
+  • @media print actualizado: oculta .operador-header, .quick-actions,
+    .admin-dash-header, .kpi-grid, .charts-row, .tabla-operadores,
+    .selector-usuario-wrap, .qa-btn[data-go-op]
+
+4. js/auth.js  (HELPERS DE ROL)
+-------------------------------
+  + getRol()           → retorna s.rol || 'operador'
+  + esAdmin()          → rol === 'admin'
+  + esLider()          → rol === 'lider'
+  + esOperador()       → rol === 'operador'
+  + esCapturista()     → rol === 'lider' || rol === 'operador'  (quienes capturan)
+  + getUsuario()       → s.usuario
+  + getNombre()        → s.nombre || s.usuario
+  + getLiderId()       → s.lider_id
+
+5. js/ui.js  (HELPERS GRÁFICOS/CALIDAD)
+----------------------------------------
+  + progressRing(containerId, value, max) → anima anillo SVG, retorna {setValue}
+  + calcularCalidadSim(r) → score 0-4, nivel alta/media/baja, detalles{}
+      Criterios: tel 10 díg, sección ≠ NO_CONOCE, obs no vacía, consentimiento_medio='escrito'
+  + qualityBadge(nivel) → <span class="badge-calidad nivel">Nivel</span>
+  + renderChart(canvasId, type, data, options) → Chart.js genérico, destroy previo
+  + _deepMerge() → merge profundo opciones Chart.js
+  + chartColors → paleta: primary, success, warn, danger, gradAlta/Media/Baja/Primary
+
+================================================================================
+FLUJO DE NAVEGACIÓN POR ROL
+================================================================================
+
+LOGIN (index.html) → Auth.login() → localStorage.pc_session_v1 → app.html
+
+app.html → App.init():
+  1. Auth.require() → valida token 32 hex
+  2. Lee sesión → Auth.getRol() / Auth.esCapturista() / Auth.esAdmin()
+  3. Configura bottom-nav según rol
+  4. NAVEGACIÓN:
+     - esAdmin      → go('admin-dashboard') → initAdminDashboard()
+     - esCapturista → go('operador')        → initOperador()
+     - else         → go('home')            → buscar() + cintillo
+
+OPERADOR (rol lider/operador):
+  - Bottom-nav: 3 botones (Capturar | Mis reg. | Calidad) → cambiarTabOperador()
+  - Quick-actions desktop: mismos 3 tabs
+  - go('operador') → cambiarTabOperador('capturar')
+  - Capturar: frm-nuevo-sim-op → API.crearSim() → recarga stats
+  - Mis registros: API.buscarSim({lider: usuario, q, limit:50})
+  - Calidad: recalcula grid desde mismos datos
+
+ADMIN (rol admin):
+  - Bottom-nav: Home/Nuevo/Buscar/Ficha/Admin/Dashboard
+  - go('admin-dashboard') → initAdminDashboard() → cargarAdminDashboard()
+  - Selector #admin-user-select → onchange → cargarAdminDashboard()
+  - Tabla "Ver detalle" → setea selector + go('home') + filtra f-lider
+
+================================================================================
+INDICADOR DE CALIDAD (ALGORITMO)
+================================================================================
+
+Por registro (simpatizante):
+  1. Teléfono válido:      tel.replace(/\D/g,'').length === 10
+  2. Sección capturada:    r.seccion && r.seccion !== 'NO_CONOCE'
+  3. Observaciones:        r.observaciones && r.observaciones.trim()
+  4. Consentimiento escrito: r.consentimiento_medio?.toLowerCase() === 'escrito'
+
+Score 0-4:
+  4 → 🟢 ALTA
+  3 → 🟡 MEDIA
+  0-2 → 🔴 BAJA
+
+Aplicación:
+  - Operador grid: % por criterio + barra coloreada
+  - Admin barras: color de barra = calidadPromedio del operador
+  - Admin donut: distribución operadores por nivel
+  - Admin tabla: badge-calidad por operador
+
+================================================================================
+PENDIENTES / MEJORAS FUTURAS
+================================================================================
+
+BACKEND (Google Apps Script - Sheet 12VhHRb9yZjWGz4y_1tv5-t02Kb35quQi2lvRVvAWOG8)
+  Actualmente todo se calcula en frontend con API.buscarSim({lider, limit:1000}).
+  Para 100 operadores × ~50-200 registros = lentitud.
+
+  Endpoints recomendados a implementar en Apps Script:
+
+  1. action: stats_operador
+     Input:  { lider: string }
+     Output: { total, conTel, conSec, conObs, conConsEsc, rachaDias,
+               capturasPorDia: [{fecha, count}], ultimaCaptura }
+
+  2. action: stats_admin
+     Input:  { usuario?: string }  // __all__ = global
+     Output: { operadores: [{usuario, nombre, total, calidadPromedio,
+               calidadNivel, ultimaCaptura, cumpleMeta}],
+               totales: {operadores, capturas, promedio, cumplen},
+               tendencia: [{fecha, total}] }
+
+  3. action: calidad_captura
+     Input:  { folio: string }
+     Output: { score, nivel, detalles }
+
+CREACIÓN 100 CUENTAS OPERADOR
+  - Admin panel actual: frm-usuario-nuevo → usuario, nombre, rol='lider', password
+  - Generar: botón "Generar" → 'PC' + random + 'A1'
+  - lider_id: auto (LID-001...LID-100)
+  - Entrega: Exportar CSV → imprimir credenciales individuales
+
+AVISO PRIVACIDAD - VERSIONADO
+  - Actualmente: pc_aviso_aceptado_v1 (timestamp)
+  - Futuro: almacenar hash del contenido → forzar re-aceptación si cambia
+
+RACHA DÍAS CONSECUTIVOS
+  - Actual: estricto (todos los días, sin saltar fines de semana)
+  - Opción: permitir saltar sábados/domingos o días sin actividad programada
+
+================================================================================
+CÓMO PROBAR LOCALMENTE
+================================================================================
+
+powershell> cd C:\Users\leonm\proyectosmarco\PedroCanalesRBD
+powershell> npx serve . -p 3000
+# Abrir http://localhost:3000
+
+PRUEBAS:
+1. Aviso Privacidad:
+   - Incógnito → index.html → modal → "Imprimir ahora" → aviso-privacidad.html?print=1
+   - Ctrl+P en aviso-privacidad.html → vista carta formal (membrete, numeración, firma)
+   - Checkbox → "Aceptar y continuar" habilitado → entra app → recargar → NO repite
+
+2. Operador (usuario con rol 'lider' o 'operador'):
+   - Ve sección "Operador" (no Home/Admin)
+   - Contador 0/50, anillo 0%
+   - Capturar 1 → contador++, anillo anima, racha 1, calidad actualiza
+   - "Mis registros" → solo sus capturas
+   - "Calidad" → 4 indicadores con %
+
+3. Admin (usuario con rol 'admin'):
+   - Ve "Panel de Control" con KPIs, 3 gráficos, tabla
+   - Selector operador filtra todo
+   - Barras coloreadas verde/ámbar/rojo
+   - "Ver detalle" → Home filtrado por ese líder
+
+================================================================================
+COMANDOS ÚTILES
+================================================================================
+
+# Ver diff git
+git diff HEAD
+
+# Ver estado
+git status
+
+# Log resumido
+git log --oneline -10
+
+# Servidor dev
+npx serve . -p 3000 --single
+
+# Ver archivos cambiados hoy
+find . -name "*.html" -o -name "*.css" -o -name "*.js" | head -20
+
+================================================================================
+NOTAS PARA PRÓXIMA SESIÓN
+================================================================================
+
+- El modelo puede continuar desde esta bitácora sin releer todo el código
+- Prioridad: implementar endpoints backend (stats_operador, stats_admin)
+- Revisar: racha fines de semana, versionado aviso privacidad
+- Testing: crear usuarios prueba (admin + 3-4 operadores) y simular capturas
+- Chart.js ya cargado vía CDN (funciona offline tras 1ª carga + SW)
+
+================================================================================
+FIN BITÁCORA 2026-09-11
+================================================================================

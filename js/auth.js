@@ -15,8 +15,20 @@ const Auth = {
   async login(usuario, password) {
     const data = await API.login(usuario, password);
     if (!data || !data.token) throw new Error('Login no devolvió token');
-    this.setSession(data);
-    return data;
+
+    // Track session metrics
+    const now = new Date().toISOString();
+    const lastLogin = localStorage.getItem('pc_last_login') || 'Primera conexión';
+    localStorage.setItem('pc_last_login', now);
+
+    const sessionWithMetrics = {
+      ...data,
+      session_start: now,
+      last_login: lastLogin
+    };
+
+    this.setSession(sessionWithMetrics);
+    return sessionWithMetrics;
   },
 
   async logout() {
@@ -40,5 +52,31 @@ const Auth = {
     // Validación de expiración delegada al backend.
     // Si está expirada, el backend devuelve code=AUTH y api.js limpia/redirige.
     return s;
+  },
+
+  // Helpers de rol (basados en sesión actual)
+  getRol() {
+    const s = this.getSession();
+    return s ? (s.rol || 'operador') : null;
+  },
+  esAdmin() { return this.getRol() === 'admin'; },
+  esLider() { return this.getRol() === 'lider'; },
+  esOperador() { return this.getRol() === 'capturista'; },
+  // Capturista = lider o capturista (quienes capturan simpatizantes)
+  esCapturista() {
+    const r = this.getRol();
+    return r === 'lider' || r === 'capturista';
+  },
+  getUsuario() {
+    const s = this.getSession();
+    return s ? s.usuario : null;
+  },
+  getNombre() {
+    const s = this.getSession();
+    return s ? (s.nombre || s.usuario) : null;
+  },
+  getLiderId() {
+    const s = this.getSession();
+    return s ? s.lider_id : null;
   }
 };

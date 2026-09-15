@@ -6,12 +6,12 @@
  * 2. Crea un archivo NUEVO llamado "backup" (el ícono + junto a "Archivos").
  * 3. Pega TODO este contenido en ese archivo nuevo.
  * 4. Guarda (Ctrl+S).
- * 5. Selecciona la función "instalarTriggerSemanal" en el dropdown.
+ * 5. Selecciona la función "instalarTriggerDiario" en el dropdown.
  * 6. Click en "Ejecutar". Te pedirá permisos → "Revisar permisos"
  *    → elegir tu cuenta → "Avanzado" → "Ir a backup (no seguro)".
- * 7. Cuando termine, ya tienes: carpeta RBD-Backups + trigger lunes 7am.
+ * 7. Cuando termine, ya tienes: carpeta RBD-Backups + trigger diario 12:00.
  *
- * Después de eso, cada lunes a las 7am se hace una copia automática
+ * Después de esto, cada día a las 12:00 se hace una copia automática
  * del Sheet completo y se borran los backups con más de 90 días.
  * También te llega un email de confirmación a admin01.
  *
@@ -29,8 +29,7 @@ const CARPETA_BACKUP_NOMBRE = 'RBD-Backups';
 const SHEET_BASE_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 const RETENCION_DIAS = 0;                // 0 = NUNCA borrar backups. Cambiar a 90 si quieres auto-limpieza.
 const EMAIL_AVISO = 'admin01';           // notificación de backup (resuelve a hoja USUARIOS)
-const DIA_TRIGGER = 1;                   // 1 = lunes
-const HORA_TRIGGER = 7;                  // 7am hora del servidor (normalmente UTC-6 = 1am México)
+const HORA_TRIGGER = 12;                  // 12:00 hora del servidor (ajustar según zona horaria)
 
 // ===== HELPERS =====
 function _obtenerOCrearCarpeta() {
@@ -139,8 +138,8 @@ function _limpiarBackupsViejos(carpeta) {
   return borrados;
 }
 
-// ===== INSTALACIÓN DEL TRIGGER SEMANAL =====
-function instalarTriggerSemanal() {
+// ===== INSTALACIÓN DEL TRIGGER DIARIO =====
+function instalarTriggerDiario() {
   // Borrar triggers previos de este script para no duplicar.
   const triggers = ScriptApp.getProjectTriggers();
   for (const t of triggers) {
@@ -149,15 +148,15 @@ function instalarTriggerSemanal() {
     }
   }
 
-  // Crear trigger nuevo: cada lunes 7am (hora del servidor Apps Script).
+  // Crear trigger nuevo: cada día a las 12:00 (hora del servidor Apps Script).
   ScriptApp.newTrigger('hacerBackup')
     .timeBased()
-    .onWeekDay(ScriptApp.WeekDay.MONDAY)
+    .everyDays(1)
     .atHour(HORA_TRIGGER)
     .create();
 
-  Logger.log('Trigger semanal instalado: cada lunes ' + HORA_TRIGGER + ':00');
-  return 'Trigger instalado. Cada lunes a las ' + HORA_TRIGGER + ':00 se ejecuta hacerBackup().';
+  Logger.log('Trigger diario instalado: cada día a las ' + HORA_TRIGGER + ':00');
+  return 'Trigger instalado. Cada día a las ' + HORA_TRIGGER + ':00 se ejecuta hacerBackup().';
 }
 
 // ===== DESINSTALACIÓN =====
